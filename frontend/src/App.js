@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/Home';
+import Login from './components/Login';
+import Signup from './components/Signup';
+import Dashboard from './components/Dashboard';
+
 import './App.css';
 
 function App() {
-    const [data, setData] = useState([]);
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/data')
-            .then(response => {
-                setData(response.data);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the data!', error);
-            });
-
         const handleOnline = () => setIsOffline(false);
         const handleOffline = () => setIsOffline(true);
 
@@ -29,27 +25,25 @@ function App() {
 
     if (isOffline) {
         return (
-            <div className="App">
-                <header className="App-header">
-                    <h1>You are offline</h1>
-                    <p>Please check your internet connection and try again.</p>
-                </header>
+            <div className="offline-container">
+                <h1>You are offline</h1>
+                <p>Please check your internet connection and try again.</p>
             </div>
         );
     }
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <h1>PWA with React and Node</h1>
-                <ul>
-                    {data.map(item => (
-                        <li key={item.id}>{item.name}: {item.value}</li>
-                    ))}
-                </ul>
-            </header>
-        </div>
-    );
+      <Router>
+          <div className="App">
+              <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+              </Routes>
+          </div>
+      </Router>
+  );
 }
 
 export default App;

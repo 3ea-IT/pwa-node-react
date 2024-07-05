@@ -1,0 +1,63 @@
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.signup-container form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+.signup-container input, .signup-container label {
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.signup-container .gender-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+}
+
+.signup-container .password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.signup-container .password-container input {
+    flex: 1;
+    padding-right: 40px; /* Add some padding to the right to make space for the button */
+}
+
+.signup-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #007BFF;
+    padding: 0;
+}
+
+.signup-container button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.signup-container button:hover {
+    background-color: #0056b3;
+}

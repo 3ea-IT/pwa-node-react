@@ -2,12 +2,11 @@ const CACHE_NAME = 'pwa-cache-v1';
 const urlsToCache = [
     '/',
     '/index.html',
-    '/offline.html',
     '/manifest.json',
+    '/logo192.png',
     '/static/js/bundle.js',
     '/static/js/0.chunk.js',
     '/static/js/main.chunk.js',
-    '/logo192.png',
     // add other assets you want to cache
 ];
 
@@ -30,7 +29,7 @@ self.addEventListener('fetch', event => {
             }
             return fetch(event.request).catch(() => {
                 if (event.request.mode === 'navigate') {
-                    return caches.match('/offline.html');
+                    return caches.match('/');
                 }
             });
         })
