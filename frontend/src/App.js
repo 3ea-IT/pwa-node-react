@@ -7,6 +7,7 @@ import Dashboard from './components/Dashboard';
 import PlayAndEarn from './components/PlayAndEarn';
 import Navbar from './components/Navbar';
 import Wallet from './components/Wallet';
+import SplashScreen from './components/SplashScreen'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -39,7 +40,7 @@ function App() {
       <Router>
           <div className="App">
               <Routes>
-                  <Route path="/" element={<Login />} />
+                  <Route path="/" element={<SplashScreen />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/dashboard" element={<Dashboard />} />

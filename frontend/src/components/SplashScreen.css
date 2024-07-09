@@ -1,0 +1,27 @@
+
+.splash-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff; /* Set the background color */
+}
+
+.splash-logo {
+    max-width: 100%;
+    height: auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+@media (min-width: 768px) {
+    .splash-logo {
+        width: 50%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .splash-logo {
+        width: 15%;
+    }
+}
