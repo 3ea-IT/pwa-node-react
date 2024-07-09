@@ -1,0 +1,42 @@
+.navbar {
+    margin-bottom: 20px;
+    z-index: 1000;
+}
+
+.nav-link {
+    color: white !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link.active {
+    color: #007bff !important;
+}
+
+.nav-link:hover {
+    color: #0056b3 !important;
+}
+
+.btn-outline-light {
+    border-color: #ffffff;
+    color: #ffffff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.container-fluid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-nav .nav-item .nav-link {
+    padding-top: 10px; /* Aligns the links better with the button */
+}
+
+.btn-outline-light {
+    margin-top: 0px; /* Adjust this value to align the button properly */
+}   

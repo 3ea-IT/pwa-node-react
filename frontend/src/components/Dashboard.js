@@ -1,10 +1,14 @@
 import React from 'react';
+import Navbar from './Navbar';
 import './Dashboard.css';
 
 const Dashboard = () => {
     return (
-        <div className="dashboard-container">
-            <h1>Dashboard</h1>
+        <div>
+            <Navbar />
+            <div className="container mt-5">
+                <h1>Dashboard</h1>
+            </div>
         </div>
     );
 };

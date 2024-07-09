@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+body {
+  padding-top: 30px; /* To prevent content from hiding under the fixed navbar */
+}
+
 .offline-container {
   display: flex;
   flex-direction: column;

@@ -1,35 +1,78 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
 .login-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    text-align: center;
+    padding: 20px;
 }
 
-.login-container form {
+.login-box {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.login-box form {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
-.login-container input {
-    margin: 5px;
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    width: 100%;
+    text-align: left;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input {
     padding: 10px;
     font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
-.login-container button {
+.login-box button {
     background-color: #007BFF;
     color: white;
     border: none;
     padding: 10px 20px;
-    margin: 10px;
+    margin: 10px 0;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+    width: 100%;
 }
 
-.login-container button:hover {
+.login-box button:hover {
     background-color: #0056b3;
 }
 
@@ -37,4 +80,36 @@
     color: red;
     font-size: 0.9rem;
     margin: 10px 0;
+}
+
+.signup-link {
+    margin-top: 20px;
+    color: #007BFF;
+    cursor: pointer;
+}
+
+.signup-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+
+@media (max-width: 600px) {
+    .login-box {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .form-group input {
+        font-size: 14px;
+    }
+
+    .login-box button {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .signup-link {
+        font-size: 14px;
+    }
 }

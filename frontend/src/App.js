@@ -4,7 +4,9 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
-
+import PlayAndEarn from './components/PlayAndEarn';
+import Navbar from './components/Navbar';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 function App() {
@@ -36,10 +38,11 @@ function App() {
       <Router>
           <div className="App">
               <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/" element={<Login />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/play-and-earn" element={<PlayAndEarn />} />
               </Routes>
           </div>
       </Router>

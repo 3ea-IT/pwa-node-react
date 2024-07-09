@@ -55,11 +55,68 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.get('/data', (req, res) => {
-    const sql = 'SELECT * FROM dummy_data';
+// Middleware to verify JWT
+const verifyJWT = (req, res, next) => {
+    const token = req.headers['x-access-token'];
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
+    jwt.verify(token, 'your_jwt_secret', (err, decoded) => {
+        if (err) {
+            return res.status(500).json({ message: 'Failed to authenticate token' });
+        }
+
+        req.userId = decoded.id;
+        next();
+    });
+};
+
+// Endpoint to get random 5 questions
+app.get('/get-questions', verifyJWT, (req, res) => {
+    const sql = 'SELECT * FROM questionnaire ORDER BY RAND() LIMIT 5';
     db.query(sql, (err, results) => {
         if (err) throw err;
         res.json(results);
+    });
+});
+
+// Endpoint to save an answer
+app.post('/save-answer', verifyJWT, (req, res) => {
+    const { ques_id, ans, is_correct, quiz_id } = req.body;
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    const insertAnswer = `INSERT INTO answers (user_id, ques_id, ans, is_correct, quiz_id, date) VALUES (?, ?, ?, ?, ?, ?)`;
+    db.query(insertAnswer, [req.userId, ques_id, ans, is_correct, quiz_id, date], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: 'Error saving answer', error: err });
+        } else {
+            res.status(200).json({ message: 'Answer saved successfully' });
+        }
+    });
+});
+
+// Endpoint to get the latest quiz ID
+app.get('/latest-quiz-id', verifyJWT, (req, res) => {
+    const sql = 'SELECT MAX(quiz_id) AS latestQuizId FROM answers';
+    db.query(sql, (err, result) => {
+        if (err) throw err;
+        res.json(result[0]);
+    });
+});
+
+// Endpoint to save quiz result
+app.post('/save-quiz-result', verifyJWT, (req, res) => {
+    const { score, points } = req.body;
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    const insertResult = `INSERT INTO playearn (user_id, result, points, date) VALUES (?, ?, ?, ?)`;
+    db.query(insertResult, [req.userId, score, points, date], (err, result) => {
+        if (err) {
+            res.status(500).json({ message: 'Error saving quiz result', error: err });
+        } else {
+            res.status(200).json({ message: 'Quiz result saved successfully' });
+        }
     });
 });
 
