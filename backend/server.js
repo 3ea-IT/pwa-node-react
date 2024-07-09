@@ -49,7 +49,7 @@ app.post('/login', async (req, res) => {
 
         const token = jwt.sign({ id: user.id, email: user.EMAIL }, 'your_jwt_secret', { expiresIn: '1h' });
 
-        res.status(200).json({ message: 'Authentication successful', token });
+        res.status(200).json({ message: 'Authentication successful', token, user_id: user.id });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });
     }
@@ -81,6 +81,32 @@ app.get('/get-questions', verifyJWT, (req, res) => {
     });
 });
 
+// Endpoint to get the latest quiz ID
+app.get('/latest-quiz-id', verifyJWT, (req, res) => {
+    const sql = 'SELECT MAX(quiz_id) AS latestQuizId FROM answers';
+    db.query(sql, (err, result) => {
+        if (err) throw err;
+        res.json(result[0]);
+    });
+});
+
+// Endpoint to get user points
+app.get('/user-points/:userId', verifyJWT, (req, res) => {
+    const userId = req.params.userId;
+
+    const getUserPoints = `SELECT * FROM points_log WHERE user_id = ?`;
+    db.query(getUserPoints, [userId], (err, results) => {
+        if (err) {
+            console.log('Error fetching user points:', err);
+            res.status(500).json({ message: 'Error fetching user points', error: err });
+        } else {
+            console.log('Fetched user points:', results);
+            res.status(200).json(results);
+        }
+    });
+});
+
+
 // Endpoint to save an answer
 app.post('/save-answer', verifyJWT, (req, res) => {
     const { ques_id, ans, is_correct, quiz_id } = req.body;
@@ -96,26 +122,26 @@ app.post('/save-answer', verifyJWT, (req, res) => {
     });
 });
 
-// Endpoint to get the latest quiz ID
-app.get('/latest-quiz-id', verifyJWT, (req, res) => {
-    const sql = 'SELECT MAX(quiz_id) AS latestQuizId FROM answers';
-    db.query(sql, (err, result) => {
-        if (err) throw err;
-        res.json(result[0]);
-    });
-});
-
 // Endpoint to save quiz result
 app.post('/save-quiz-result', verifyJWT, (req, res) => {
-    const { score, points } = req.body;
+    const { score, points, quiz_id } = req.body;
     const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
     const insertResult = `INSERT INTO playearn (user_id, result, points, date) VALUES (?, ?, ?, ?)`;
+    const insertPointsLog = `INSERT INTO points_log (user_id, points, type, remark, source, date) VALUES (?, ?, ?, ?, ?, ?)`;
+
     db.query(insertResult, [req.userId, score, points, date], (err, result) => {
         if (err) {
             res.status(500).json({ message: 'Error saving quiz result', error: err });
         } else {
-            res.status(200).json({ message: 'Quiz result saved successfully' });
+            const pointsLogRemark = `quiz - ${quiz_id}`;
+            db.query(insertPointsLog, [req.userId, points, 'cr', pointsLogRemark, 'PEARN', date], (err, logResult) => {
+                if (err) {
+                    res.status(500).json({ message: 'Error saving points log', error: err });
+                } else {
+                    res.status(200).json({ message: 'Quiz result and points log saved successfully' });
+                }
+            });
         }
     });
 });

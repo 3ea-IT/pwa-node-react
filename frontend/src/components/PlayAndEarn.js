@@ -112,7 +112,7 @@ const PlayAndEarn = () => {
             const result = `${score}/5`;
             const points = score * 10;
             setResultSaved(true);
-            axios.post('http://localhost:5000/save-quiz-result', { score: result, points }, {
+            axios.post('http://localhost:5000/save-quiz-result', { score: result, points, quiz_id: quizId }, {
                 headers: { 'x-access-token': token }
             })
             .then(response => {
@@ -122,7 +122,7 @@ const PlayAndEarn = () => {
                 console.error('There was an error saving the quiz result!', error);
             });
         }
-    }, [quizComplete, resultSaved]); // Only run when quizComplete changes
+    }, [quizComplete, resultSaved, quizId, score]); // Only run when quizComplete changes
 
     return (
         <div className="play-and-earn-container">

@@ -6,6 +6,7 @@ import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import PlayAndEarn from './components/PlayAndEarn';
 import Navbar from './components/Navbar';
+import Wallet from './components/Wallet';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -43,6 +44,7 @@ function App() {
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/play-and-earn" element={<PlayAndEarn />} />
+                  <Route path="/wallet" element={<Wallet />} />
               </Routes>
           </div>
       </Router>

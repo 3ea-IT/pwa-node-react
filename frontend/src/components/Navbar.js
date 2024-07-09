@@ -7,6 +7,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user_id');
         navigate('/login');
     };
 
@@ -23,6 +24,9 @@ const Navbar = () => {
                         </li>
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/play-and-earn">Play and Earn</NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink className="nav-link" to="/wallet">Wallet 💲</NavLink>
                         </li>
                     </ul>
                     <button className="btn btn-outline-light align-middle" onClick={handleLogout}>Logout</button>

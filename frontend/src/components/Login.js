@@ -13,7 +13,9 @@ const Login = () => {
         e.preventDefault();
         axios.post('http://localhost:5000/login', { email, password })
             .then(response => {
+                console.log(response.data); // Add this to debug the response
                 localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user_id', response.data.user_id);
                 alert('Logging in...');
                 navigate('/dashboard');
             })
