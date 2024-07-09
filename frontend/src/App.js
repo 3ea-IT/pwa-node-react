@@ -8,6 +8,7 @@ import PlayAndEarn from './components/PlayAndEarn';
 import Navbar from './components/Navbar';
 import Wallet from './components/Wallet';
 import SplashScreen from './components/SplashScreen'; 
+import GetStarted from './components/GetStarted';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -41,6 +42,7 @@ function App() {
           <div className="App">
               <Routes>
                   <Route path="/" element={<SplashScreen />} />
+                  <Route path="/get-started" element={<GetStarted />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/dashboard" element={<Dashboard />} />

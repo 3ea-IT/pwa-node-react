@@ -8,7 +8,7 @@ const SplashScreen = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            navigate('/login');
+            navigate('/get-started');
         }, 3000); // Redirect after 3 seconds
 
         return () => clearTimeout(timer); // Cleanup the timer on component unmount
