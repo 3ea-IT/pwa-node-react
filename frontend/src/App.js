@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Wallet from './components/Wallet';
 import SplashScreen from './components/SplashScreen'; 
 import GetStarted from './components/GetStarted';
+import OtpVerification from './components/OtpVerification';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -42,8 +43,9 @@ function App() {
               <Routes>
                   <Route path="/" element={<SplashScreen />} />
                   <Route path="/get-started" element={<GetStarted />} />    
-                  <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/otp-verification" element={<OtpVerification />} />
+                  <Route path="/login" element={<Login />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/play-and-earn" element={<PlayAndEarn />} />
                   <Route path="/wallet" element={<Wallet />} />

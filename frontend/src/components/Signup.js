@@ -7,14 +7,14 @@ import googleIcon from './assets/GoogleIcon.png';
 import facebookIcon from './assets/FacebookIcon.png';
 
 const Signup = () => {
-    const [formData, setFormData] = useState({
+    const [userData, setUserData] = useState({
         name: '',
-        email: '',
-        mob: '',
         dob: '',
         gender: '',
+        mob: '',
+        email: '',
         password: '',
-        confirmPassword: '',
+        confirmPassword:'',
     });
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -23,40 +23,30 @@ const Signup = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+        setUserData({ ...userData, [name]: value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Check if passwords match
-        if (formData.password !== formData.confirmPassword) {
+        if (userData.password !== userData.confirmPassword) {
             setError("Passwords do not match!");
             return;
         }
 
-        // Remove confirmPassword from the data sent to the backend
-        const { confirmPassword, ...data } = formData;
-
-        // Add current date as registration date
+        const { confirmPassword, ...data } = userData;
         data.date = new Date().toISOString().slice(0, 10);
-        
-        // Add null values for pin, area, city, and state
         data.pin = null;
         data.area = null;
         data.city = null;
         data.state = null;
 
-        axios.post('http://localhost:5000/signup', data)
+        axios.post('http://localhost:5000/send-otp', { userData })
             .then(response => {
-                alert('Registration successful!');
-                navigate('/login');
+                navigate('/otp-verification', { state: { userData, otp: response.data.otp } });
             })
             .catch(error => {
-                setError('There was an error creating the account. Please try again.');
+                setError('There was an error sending the OTP. Please try again.');
                 console.error('There was an error!', error);
             });
     };
@@ -72,10 +62,10 @@ const Signup = () => {
                 {error && <p className="error">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required />
+                        <input type="text" name="name" placeholder="Full Name" value={userData.name} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
-                        <input type="date" name="dob" placeholder="Date of Birth" value={formData.dob} onChange={handleChange} required />
+                        <input type="date" name="dob" placeholder="Date of Birth" value={userData.dob} onChange={handleChange} required />
                     </div>
                     <div className="gender-container">
                         <label>
@@ -89,27 +79,23 @@ const Signup = () => {
                         </label>
                     </div>
                     <div className="form-group">
-                        <input type="text" name="mob" placeholder="Mobile Number" value={formData.mob} onChange={handleChange} required />
+                        <input type="text" name="mob" placeholder="Mobile Number" value={userData.mob} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
-                        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+                        <input type="email" name="email" placeholder="Email" value={userData.email} onChange={handleChange} required />
                     </div>
-
-
                     <div className="password-container">
-                        <input type={passwordVisible ? "text" : "password"} name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+                        <input type={passwordVisible ? "text" : "password"} name="password" placeholder="Password" value={userData.password} onChange={handleChange} required />
                         <button type="button" className="toggle-password" onClick={() => setPasswordVisible(!passwordVisible)}>
                             {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
-
                     <div className="password-container">
-                        <input type={confirmPasswordVisible ? "text" : "password"} name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
+                        <input type={confirmPasswordVisible ? "text" : "password"} name="confirmPassword" placeholder="Confirm Password" value={userData.confirmPassword} onChange={handleChange} required />
                         <button type="button" className="toggle-password" onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
                             {confirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
-
                     <button type="submit" className="signup-button">Sign Up</button>
                 </form>
                 <p className="signin-link" onClick={handleSigninRedirect}>

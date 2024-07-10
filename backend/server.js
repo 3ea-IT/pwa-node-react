@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken');
 const { createUser, findUserByEmail } = require('./models/User');
 const saltRounds = 10;
 
+let temporaryUserData = {};
+
+
 const app = express();
 const port = 5000;
 
@@ -58,6 +61,69 @@ app.post('/signup', (req, res) => {
             }
         });
     });
+});
+
+// Endpoint to send OTP
+app.post('/send-otp', (req, res) => {
+    const { userData } = req.body;
+    if (!userData) {
+        return res.status(400).json({ message: 'User data is required' });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
+
+    // Store OTP in temporary storage
+    temporaryUserData[userData.mob] = { ...userData, otp };
+    console.log(`Generated OTP: ${otp}`); // Log OTP for debugging
+
+    // Send OTP to user's mobile number (for demonstration, we'll log it)
+    console.log(`Sending OTP ${otp} to mobile number ${userData.mob}`);
+
+    res.status(200).json({ message: 'OTP sent successfully', otp });
+});
+
+// Endpoint to verify OTP
+app.post('/verify-otp', (req, res) => {
+    const { otp, userData } = req.body;
+
+    if (!userData || !otp) {
+        return res.status(400).json({ message: 'User data and OTP are required' });
+    }
+
+    const storedData = temporaryUserData[userData.mob];
+    if (storedData && otp === storedData.otp) {
+        // Hash the password before saving
+        bcrypt.hash(storedData.password, saltRounds, (err, hashedPassword) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error hashing the password. Please try again.' });
+            }
+            // Save user to database after OTP verification
+            const sql = `INSERT INTO users (name, dob, gender, mob, email, password, date) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+            const { name, dob, gender, mob, email } = storedData;
+            const date = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current date and time
+
+            db.query(sql, [name, dob, gender, mob, email, hashedPassword, date], (err, result) => {
+                if (err) {
+                    return res.status(500).json({ message: 'There was an error creating the account. Please try again.' });
+                }
+                // Clean up temporary storage
+                delete temporaryUserData[userData.mob];
+                res.status(200).json({ message: 'User account created successfully' });
+            });
+        });
+    } else {
+        res.status(400).json({ message: 'Invalid OTP' });
+    }
+});
+
+
+// Resend OTP route
+app.post('/resend-otp', (req, res) => {
+    const { userData } = req.body;
+    const otp = '123456'; // Replace with actual OTP generation and sending logic
+    userData.otp = otp;
+
+    res.status(200).json({ message: 'OTP resent successfully', otp });
 });
 
 app.post('/login', async (req, res) => {
