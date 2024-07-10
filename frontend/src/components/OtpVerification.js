@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './OtpVerification.css';
 import verificationImage from './assets/two-step-verification.png';
-import editIcon from './assets/editicon.png'; // Import the edit icon
+import editIcon from './assets/editicon.png';
 
 const OtpVerification = () => {
     const location = useLocation();
@@ -11,11 +11,14 @@ const OtpVerification = () => {
     const { userData, otp: sentOtp } = location.state;
     const [otp, setOtp] = useState(new Array(6).fill(''));
     const [error, setError] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+    const [newMob, setNewMob] = useState(userData.mob);
+    const [currentOtp, setCurrentOtp] = useState(sentOtp);
     const inputRefs = useRef([]);
 
     useEffect(() => {
-        console.log(`Sent OTP: ${sentOtp}`); // For testing purposes
-    }, [sentOtp]);
+        console.log(`Sent OTP: ${currentOtp}`); // For testing purposes
+    }, [currentOtp]);
 
     const handleChange = (element, index) => {
         if (isNaN(element.value)) return;
@@ -30,11 +33,6 @@ const OtpVerification = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const enteredOtp = otp.join('');
-        
-        if (enteredOtp !== sentOtp) {
-            setError('Invalid OTP');
-            return;
-        }
 
         axios.post('http://localhost:5000/verify-otp', { otp: enteredOtp, userData })
             .then(response => {
@@ -48,14 +46,27 @@ const OtpVerification = () => {
     };
 
     const handleResendOtp = () => {
-        axios.post('http://localhost:5000/send-otp', { userData })
+        const updatedUserData = { ...userData, mob: newMob };
+        axios.post('http://localhost:5000/send-otp', { userData: updatedUserData })
             .then(response => {
                 alert('OTP resent successfully!');
+                setOtp(new Array(6).fill('')); // Clear OTP input
+                setCurrentOtp(response.data.otp); // Update the current OTP
             })
             .catch(error => {
                 setError('There was an error resending the OTP. Please try again.');
                 console.error('There was an error!', error);
             });
+    };
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleUpdateMobile = () => {
+        setIsEditing(false);
+        userData.mob = newMob;
+        handleResendOtp();
     };
 
     return (
@@ -87,9 +98,26 @@ const OtpVerification = () => {
                         ))}
                     </div>
                     <p className="mobile-number">
-                        {userData.mob} <button type="button" onClick={handleResendOtp} className="edit-mobile">
-                            <img src={editIcon} alt="Edit" className="edit-icon" />
-                        </button>
+                        {isEditing ? (
+                            <>
+                                <input
+                                    type="text"
+                                    value={newMob}
+                                    onChange={(e) => setNewMob(e.target.value)}
+                                    className="edit-mobile-input"
+                                />
+                                <button type="button" onClick={handleUpdateMobile} className="update-mobile">
+                                    Update
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                {newMob}
+                                <button type="button" onClick={handleEditClick} className="edit-mobile">
+                                    <img src={editIcon} alt="Edit" className="edit-icon" />
+                                </button>
+                            </>
+                        )}
                     </p>
                     <button type="submit" className="otp-submit-button">Submit</button>
                 </form>

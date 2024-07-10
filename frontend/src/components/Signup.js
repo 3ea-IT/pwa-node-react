@@ -87,13 +87,13 @@ const Signup = () => {
                     <div className="password-container">
                         <input type={passwordVisible ? "text" : "password"} name="password" placeholder="Password" value={userData.password} onChange={handleChange} required />
                         <button type="button" className="toggle-password" onClick={() => setPasswordVisible(!passwordVisible)}>
-                            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                            {passwordVisible ? <FaEye /> : <FaEyeSlash />}
                         </button>
                     </div>
                     <div className="password-container">
                         <input type={confirmPasswordVisible ? "text" : "password"} name="confirmPassword" placeholder="Confirm Password" value={userData.confirmPassword} onChange={handleChange} required />
                         <button type="button" className="toggle-password" onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
-                            {confirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                            {confirmPasswordVisible ? <FaEye /> : <FaEyeSlash />}
                         </button>
                     </div>
                     <button type="submit" className="signup-button">Sign Up</button>

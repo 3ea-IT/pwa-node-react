@@ -160,3 +160,63 @@
 .otp-resend-button:hover {
     background-color: #E3E3E3;
 }
+
+.otp-input-container input:focus {
+    border: 2px solid #003399;
+    background-color: #DEE7F9;
+    color: #003399;
+}
+
+/* Styles for edit icon and circle */
+.edit-mobile {
+    border: 1px solid #000000;
+    border-radius: 50%;
+    padding: 5px;
+    background: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.edit-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.mobile-number {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* Styles for circle around verification image */
+.verification-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.outer-circle {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #535353E5;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.inner-circle {
+    width: 130px;
+    height: 130px;
+    background-color: #DEE7F9;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+.otp-input {
+    background-color: #DEE7F9;
+}
