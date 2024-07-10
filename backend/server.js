@@ -4,6 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { createUser, findUserByEmail } = require('./models/User');
+const saltRounds = 10;
 
 const app = express();
 const port = 5000;
@@ -23,13 +24,40 @@ db.connect(err => {
     console.log('MySQL connected...');
 });
 
-app.post('/signup', async (req, res) => {
-    try {
-        const user = await createUser(req.body);
-        res.status(201).json({ message: 'User created successfully', user });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating user', error });
-    }
+// app.post('/signup', async (req, res) => {
+//     try {
+//         const user = await createUser(req.body);
+//         res.status(201).json({ message: 'User created successfully', user });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error creating user', error });
+//     }
+// });
+
+app.post('/signup', (req, res) => {
+    const { name, email, mob, dob, gender, password, date } = req.body;
+    const pin = req.body.pin || null;
+    const area = req.body.area || null;
+    const city = req.body.city || null;
+    const state = req.body.state || null;
+
+    // Hash the password before storing it
+    bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
+        if (err) {
+            console.error('Error hashing password:', err);
+            res.status(500).json({ message: 'Error hashing password', error: err });
+            return;
+        }
+
+        const sql = 'INSERT INTO users (name, email, mob, dob, gender, password, date, pin, area, city, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        db.query(sql, [name, email, mob, dob, gender, hashedPassword, date, pin, area, city, state], (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({ message: 'There was an error creating the account. Please try again.' });
+            } else {
+                res.status(200).json({ message: 'Registration successful!' });
+            }
+        });
+    });
 });
 
 app.post('/login', async (req, res) => {

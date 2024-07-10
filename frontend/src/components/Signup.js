@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import googleIcon from './assets/GoogleIcon.png';
+import facebookIcon from './assets/FacebookIcon.png';
 
 const Signup = () => {
     const [formData, setFormData] = useState({
@@ -11,10 +13,6 @@ const Signup = () => {
         mob: '',
         dob: '',
         gender: '',
-        pin: '',
-        area: '',
-        city: '',
-        state: '',
         password: '',
         confirmPassword: '',
     });
@@ -45,6 +43,12 @@ const Signup = () => {
 
         // Add current date as registration date
         data.date = new Date().toISOString().slice(0, 10);
+        
+        // Add null values for pin, area, city, and state
+        data.pin = null;
+        data.area = null;
+        data.city = null;
+        data.state = null;
 
         axios.post('http://localhost:5000/signup', data)
             .then(response => {
@@ -64,26 +68,15 @@ const Signup = () => {
     return (
         <div className="signup-container">
             <div className="signup-box">
-                <h2>Signup</h2>
+                <h2>Let's Get Started!</h2>
                 {error && <p className="error">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Name:</label>
-                        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
+                        <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
-                        <label>Email:</label>
-                        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+                        <input type="date" name="dob" placeholder="Date of Birth" value={formData.dob} onChange={handleChange} required />
                     </div>
-                    <div className="form-group">
-                        <label>Mobile:</label>
-                        <input type="text" name="mob" placeholder="Mobile" value={formData.mob} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                        <label>Date of Birth:</label>
-                        <input type="date" name="dob" placeholder="dd-mm-yyyy" value={formData.dob} onChange={handleChange} required />
-                    </div>
-
                     <div className="gender-container">
                         <label>
                             <input type="radio" name="gender" value="Male" onChange={handleChange} required /> Male
@@ -95,26 +88,15 @@ const Signup = () => {
                             <input type="radio" name="gender" value="Others" onChange={handleChange} required /> Others
                         </label>
                     </div>
+                    <div className="form-group">
+                        <input type="text" name="mob" placeholder="Mobile Number" value={formData.mob} onChange={handleChange} required />
+                    </div>
+                    <div className="form-group">
+                        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+                    </div>
 
-                    <div className="form-group">
-                        <label>PIN:</label>
-                        <input type="text" name="pin" placeholder="PIN" value={formData.pin} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                        <label>Area:</label>
-                        <input type="text" name="area" placeholder="Area" value={formData.area} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                        <label>City:</label>
-                        <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                        <label>State:</label>
-                        <input type="text" name="state" placeholder="State" value={formData.state} onChange={handleChange} required />
-                    </div>
 
                     <div className="password-container">
-                        <label>Password:</label>
                         <input type={passwordVisible ? "text" : "password"} name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
                         <button type="button" className="toggle-password" onClick={() => setPasswordVisible(!passwordVisible)}>
                             {passwordVisible ? <FaEyeSlash /> : <FaEye />}
@@ -122,18 +104,28 @@ const Signup = () => {
                     </div>
 
                     <div className="password-container">
-                        <label>Confirm Password:</label>
                         <input type={confirmPasswordVisible ? "text" : "password"} name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
                         <button type="button" className="toggle-password" onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}>
                             {confirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
 
-                    <button type="submit">Signup</button>
+                    <button type="submit" className="signup-button">Sign Up</button>
                 </form>
                 <p className="signin-link" onClick={handleSigninRedirect}>
-                    Already a user? Sign in
+                    Already have an account? <span>Sign In</span>
                 </p>
+                <div className="divider">
+                    <span>OR</span>
+                </div>
+                <div className="social-buttons">
+                    <button className="social-button google">
+                        <img src={googleIcon} alt="Google" /> Google
+                    </button>
+                    <button className="social-button facebook">
+                        <img src={facebookIcon} alt="Facebook" /> Facebook
+                    </button>
+                </div>
             </div>
         </div>
     );

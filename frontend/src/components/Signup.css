@@ -1,6 +1,6 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #FFFFFF;
     margin: 0;
     padding: 0;
 }
@@ -16,22 +16,23 @@ body {
 }
 
 .signup-box {
-    background-color: white;
+    background-color: #FAFAFA;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 40px;
     border-radius: 15px;
-    text-align: left;
+    text-align: center;
     max-width: 450px;
     width: 100%;
     box-sizing: border-box;
     margin: 20px auto;
-    border: 1px solid #ddd;
+    border: 1px solid #E3E3E3;
 }
 
 .signup-box h2 {
     margin-bottom: 20px;
-    color: #333;
-    text-align: center;
+    color: #000000;
+    font-size: 32px;
+    font-weight: 600;
 }
 
 .signup-box form {
@@ -44,26 +45,19 @@ body {
     margin-bottom: 20px;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-}
-
 .form-group input {
-    padding: 10px;
+    padding: 12px;
     font-size: 16px;
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid #E3E3E3;
+    border-radius: 10px;
+    background-color: #FFFFFF;
 }
 
 .gender-container {
     display: flex;
-    justify-content: flex-start;
-    gap: 20px;
+    justify-content: space-around;
     margin-bottom: 20px;
 }
 
@@ -73,28 +67,21 @@ body {
     margin-bottom: 20px;
 }
 
-.password-container label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-}
-
 .password-container input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     padding-right: 40px;
     font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid #E3E3E3;
+    border-radius: 10px;
     box-sizing: border-box;
+    background-color: #FFFFFF;
 }
 
 .toggle-password {
     position: absolute;
     right: 10px;
-    top: calc(50% + 15px); /* Adjusted to move icon lower */
-    transform: translateY(-50%);
+    top: calc(50% - 12px);
     background: none;
     border: none;
     cursor: pointer;
@@ -104,41 +91,100 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 20px; /* Set a specific height */
 }
 
 .signup-box button[type="submit"] {
-    background-color: #007BFF;
+    background-color: #003399;
     color: white;
     border: none;
     padding: 12px 20px;
     margin-top: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
     width: 100%;
 }
 
 .signup-box button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #001F66;
 }
 
-.error {
-    color: red;
-    font-size: 0.9rem;
-    margin: 10px 0;
-}
-
-.signin-link {
+.signup-box .signin-link {
     margin-top: 30px;
-    color: #007BFF;
+    font-weight: 600;
+    /* color: #003399; */
     cursor: pointer;
     text-align: center;
 }
 
-.signin-link:hover {
-    color: #0056b3;
+.signup-box .signin-link span {
+    color: #003399;
+    font-weight: 700;
     text-decoration: underline;
+}
+
+.signup-box .signin-link:hover span {
+    color: #001F66;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid #727272;
+}
+
+.divider::before {
+    margin-right: .25em;
+}
+
+.divider::after {
+    margin-left: .25em;
+}
+
+.divider span {
+    color: #727272;
+    font-weight: 600;
+}
+
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-button {
+    background-color: #FFFFFF;
+    border: 1px solid #E3E3E3;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.social-button img {
+    width: 20px;
+    height: 20px;
+}
+
+.social-button.google {
+    color: #010101;
+}
+
+.social-button.facebook {
+    color: #010101;
 }
 
 @media (max-width: 600px) {
