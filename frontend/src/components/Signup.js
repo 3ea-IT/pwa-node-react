@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
+import { auth, RecaptchaVerifier, signInWithPhoneNumber } from './firebase';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import googleIcon from './assets/GoogleIcon.png';
 import facebookIcon from './assets/FacebookIcon.png';
@@ -26,29 +27,43 @@ const Signup = () => {
         setUserData({ ...userData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (userData.password !== userData.confirmPassword) {
             setError("Passwords do not match!");
             return;
         }
-
+    
         const { confirmPassword, ...data } = userData;
         data.date = new Date().toISOString().slice(0, 10);
-        data.pin = null;
-        data.area = null;
-        data.city = null;
-        data.state = null;
-
-        axios.post('http://localhost:5000/send-otp', { userData })
-            .then(response => {
-                navigate('/otp-verification', { state: { userData, otp: response.data.otp } });
-            })
-            .catch(error => {
-                setError('There was an error sending the OTP. Please try again.');
-                console.error('There was an error!', error);
-            });
+    
+        try {
+            if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-up-button', {
+                    'size': 'invisible',
+                    'callback': (response) => {
+                        console.log('Recaptcha resolved');
+                    }
+                });
+            }
+    
+            const phoneNumber = `+91${userData.mob}`;
+            const appVerifier = window.recaptchaVerifier;
+            
+            const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+            window.confirmationResult = confirmationResult;
+    
+            navigate('/otp-verification', { state: { userData: data } });
+        } catch (error) {
+            setError('There was an error sending the OTP. Please try again.');
+            console.error('Error details:', error.code, error.message);
+            
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
+        }
     };
 
     const handleSigninRedirect = () => {
@@ -96,7 +111,7 @@ const Signup = () => {
                             {confirmPasswordVisible ? <FaEye /> : <FaEyeSlash />}
                         </button>
                     </div>
-                    <button type="submit" className="signup-button">Sign Up</button>
+                    <button type="submit" id="sign-up-button" className="signup-button">Sign Up</button>
                 </form>
                 <p className="signin-link" onClick={handleSigninRedirect}>
                     Already have an account? <span>Sign In</span>

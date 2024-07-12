@@ -1,72 +1,72 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './OtpVerification.css';
 import verificationImage from './assets/two-step-verification.png';
 import editIcon from './assets/editicon.png';
+import { auth, signInWithPhoneNumber } from './firebase';
 
 const OtpVerification = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { userData, otp: sentOtp } = location.state;
+    const { userData } = location.state;
     const [otp, setOtp] = useState(new Array(6).fill(''));
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [newMob, setNewMob] = useState(userData.mob);
-    const [currentOtp, setCurrentOtp] = useState(sentOtp);
-    const inputRefs = useRef([]);
-
-    useEffect(() => {
-        console.log(`Sent OTP: ${currentOtp}`); // For testing purposes
-    }, [currentOtp]);
 
     const handleChange = (element, index) => {
         if (isNaN(element.value)) return;
         setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
 
-        // Focus next input
         if (element.nextSibling) {
             element.nextSibling.focus();
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const enteredOtp = otp.join('');
-
-        axios.post('http://localhost:5000/verify-otp', { otp: enteredOtp, userData })
-            .then(response => {
-                alert('You have successfully signed up!');
-                navigate('/login');
-            })
-            .catch(error => {
-                setError('There was an error verifying the OTP. Please try again.');
-                console.error('There was an error!', error);
-            });
+    
+        try {
+            const result = await window.confirmationResult.confirm(enteredOtp);
+            // If OTP is verified successfully, create the user account
+            const date = new Date().toISOString().slice(0, 10);
+            const data = { ...userData, date };
+    
+            await axios.post('http://localhost:5000/verify-otp', { userData: data });
+            alert('You have successfully signed up!');
+            navigate('/login');
+        } catch (error) {
+            setError('Invalid OTP. Please try again.');
+            console.error('There was an error!', error);
+        }
     };
 
-    const handleResendOtp = () => {
-        const updatedUserData = { ...userData, mob: newMob };
-        axios.post('http://localhost:5000/send-otp', { userData: updatedUserData })
-            .then(response => {
-                alert('OTP resent successfully!');
-                setOtp(new Array(6).fill('')); // Clear OTP input
-                setCurrentOtp(response.data.otp); // Update the current OTP
-            })
-            .catch(error => {
-                setError('There was an error resending the OTP. Please try again.');
-                console.error('There was an error!', error);
-            });
+    const handleResendOtp = async () => {
+        try {
+            const appVerifier = window.recaptchaVerifier;
+            const confirmationResult = await signInWithPhoneNumber(auth, `+91${newMob}`, appVerifier);
+            window.confirmationResult = confirmationResult;
+            setOtp(new Array(6).fill(''));
+        } catch (error) {
+            setError('There was an error verifying the OTP. Please try again.');
+            console.error('Error details:', error.response ? error.response.data : error.message);
+        }
     };
 
-    const handleEditClick = () => {
-        setIsEditing(true);
+    const handleEditNumber = () => {
+        setIsEditing(!isEditing);
     };
 
-    const handleUpdateMobile = () => {
-        setIsEditing(false);
+    const handleNumberChange = (e) => {
+        setNewMob(e.target.value);
+    };
+
+    const handleSaveNumber = async () => {
         userData.mob = newMob;
-        handleResendOtp();
+        setIsEditing(false);
+        await handleResendOtp();
     };
 
     return (
@@ -91,8 +91,7 @@ const OtpVerification = () => {
                                 type="text"
                                 maxLength="1"
                                 value={data}
-                                onChange={e => handleChange(e.target, index)}
-                                ref={el => inputRefs.current[index] = el}
+                                onChange={(e) => handleChange(e.target, index)}
                                 className="otp-input"
                             />
                         ))}
@@ -103,17 +102,17 @@ const OtpVerification = () => {
                                 <input
                                     type="text"
                                     value={newMob}
-                                    onChange={(e) => setNewMob(e.target.value)}
+                                    onChange={handleNumberChange}
                                     className="edit-mobile-input"
                                 />
-                                <button type="button" onClick={handleUpdateMobile} className="update-mobile">
+                                <button type="button" onClick={handleSaveNumber} className="update-mobile">
                                     Update
                                 </button>
                             </>
                         ) : (
                             <>
                                 {newMob}
-                                <button type="button" onClick={handleEditClick} className="edit-mobile">
+                                <button type="button" onClick={handleEditNumber} className="edit-mobile">
                                     <img src={editIcon} alt="Edit" className="edit-icon" />
                                 </button>
                             </>

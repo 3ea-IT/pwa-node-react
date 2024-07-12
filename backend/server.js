@@ -37,32 +37,18 @@ db.connect(err => {
 // });
 
 app.post('/signup', (req, res) => {
-    const { name, email, mob, dob, gender, password, date } = req.body;
-    const pin = req.body.pin || null;
-    const area = req.body.area || null;
-    const city = req.body.city || null;
-    const state = req.body.state || null;
+    const { userData } = req.body;
+    if (!userData) {
+        return res.status(400).json({ message: 'User data is required' });
+    }
 
-    // Hash the password before storing it
-    bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
-        if (err) {
-            console.error('Error hashing password:', err);
-            res.status(500).json({ message: 'Error hashing password', error: err });
-            return;
-        }
+    const otp = '123456'; // For testing purposes
+    temporaryUserData[userData.mob] = { ...userData, otp };
+    console.log(`Generated OTP: ${otp}`); // Log OTP for debugging
+    console.log(`Sending OTP ${otp} to mobile number ${userData.mob}`);
 
-        const sql = 'INSERT INTO users (name, email, mob, dob, gender, password, date, pin, area, city, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        db.query(sql, [name, email, mob, dob, gender, hashedPassword, date, pin, area, city, state], (err, result) => {
-            if (err) {
-                console.error(err);
-                res.status(500).json({ message: 'There was an error creating the account. Please try again.' });
-            } else {
-                res.status(200).json({ message: 'Registration successful!' });
-            }
-        });
-    });
+    res.status(200).json({ message: 'OTP sent successfully', otp });
 });
-
 // Endpoint to send OTP
 app.post('/send-otp', (req, res) => {
     const { userData } = req.body;
@@ -83,39 +69,24 @@ app.post('/send-otp', (req, res) => {
 });
 
 // Endpoint to verify OTP
-app.post('/verify-otp', (req, res) => {
-    const { otp, userData } = req.body;
+app.post('/verify-otp', async (req, res) => {
+    const { userData } = req.body;
 
-    if (!userData || !otp) {
-        return res.status(400).json({ message: 'User data and OTP are required' });
-    }
+    try {
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-    const storedData = temporaryUserData[userData.mob];
-    if (storedData && otp === storedData.otp) {
-        // Hash the password before saving
-        bcrypt.hash(storedData.password, saltRounds, (err, hashedPassword) => {
+        const insertUser = `INSERT INTO users (name, email, mob, dob, gender, password, date, pin, area, city, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        db.query(insertUser, [userData.name, userData.email, userData.mob, userData.dob, userData.gender, hashedPassword, userData.date, null, null, null, null], (err, result) => {
             if (err) {
-                return res.status(500).json({ message: 'Error hashing the password. Please try again.' });
+                res.status(500).json({ message: 'There was an error creating the account. Please try again.', error: err });
+            } else {
+                res.status(200).json({ message: 'Account created successfully' });
             }
-            // Save user to database after OTP verification
-            const sql = `INSERT INTO users (name, dob, gender, mob, email, password, date) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-            const { name, dob, gender, mob, email } = storedData;
-            const date = new Date().toISOString().slice(0, 19).replace('T', ' '); // Current date and time
-
-            db.query(sql, [name, dob, gender, mob, email, hashedPassword, date], (err, result) => {
-                if (err) {
-                    return res.status(500).json({ message: 'There was an error creating the account. Please try again.' });
-                }
-                // Clean up temporary storage
-                delete temporaryUserData[userData.mob];
-                res.status(200).json({ message: 'User account created successfully' });
-            });
         });
-    } else {
-        res.status(400).json({ message: 'Invalid OTP' });
+    } catch (error) {
+        res.status(500).json({ message: 'There was an error processing your request. Please try again.', error });
     }
 });
-
 
 // Resend OTP route
 app.post('/resend-otp', (req, res) => {
