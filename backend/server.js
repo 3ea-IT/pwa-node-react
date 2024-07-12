@@ -27,6 +27,11 @@ db.connect(err => {
     console.log('MySQL connected...');
 });
 
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+  });
+
 // app.post('/signup', async (req, res) => {
 //     try {
 //         const user = await createUser(req.body);
@@ -37,15 +42,15 @@ db.connect(err => {
 // });
 
 app.post('/signup', (req, res) => {
+    console.log('Received signup request:', req.body);
     const { userData } = req.body;
     if (!userData) {
         return res.status(400).json({ message: 'User data is required' });
     }
 
-    const otp = '123456'; // For testing purposes
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
     temporaryUserData[userData.mob] = { ...userData, otp };
-    console.log(`Generated OTP: ${otp}`); // Log OTP for debugging
-    console.log(`Sending OTP ${otp} to mobile number ${userData.mob}`);
+    console.log('Updated temporary user data:', temporaryUserData);
 
     res.status(200).json({ message: 'OTP sent successfully', otp });
 });
@@ -95,6 +100,32 @@ app.post('/resend-otp', (req, res) => {
     userData.otp = otp;
 
     res.status(200).json({ message: 'OTP resent successfully', otp });
+});
+
+app.post('/update-phone', (req, res) => {
+    console.log('Received update-phone request:', req.body);
+    const { oldMob, newMob } = req.body;
+    if (!oldMob || !newMob) {
+        return res.status(400).json({ message: 'Old and new mobile numbers are required' });
+    }
+
+    console.log('Temporary user data:', temporaryUserData);
+
+    if (temporaryUserData[oldMob]) {
+        const userData = temporaryUserData[oldMob];
+        delete temporaryUserData[oldMob];
+        userData.mob = newMob;
+        temporaryUserData[newMob] = userData;
+
+        // Generate and send new OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        temporaryUserData[newMob].otp = otp;
+        console.log(`Sending new OTP ${otp} to mobile number ${newMob}`);
+
+        res.status(200).json({ message: 'Phone number updated and new OTP sent successfully', otp });
+    } else {
+        res.status(404).json({ message: 'User data not found' });
+    }
 });
 
 app.post('/login', async (req, res) => {

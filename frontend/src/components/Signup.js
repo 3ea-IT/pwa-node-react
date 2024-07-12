@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
@@ -21,6 +21,16 @@ const Signup = () => {
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Cleanup function
+        return () => {
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
+        };
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -53,6 +63,9 @@ const Signup = () => {
             
             const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
             window.confirmationResult = confirmationResult;
+    
+            // Send user data to server
+            await axios.post('http://localhost:5000/signup', { userData: data });
     
             navigate('/otp-verification', { state: { userData: data } });
         } catch (error) {
