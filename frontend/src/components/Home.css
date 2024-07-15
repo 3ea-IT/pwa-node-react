@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #DEE7F9;
+    margin: 0;
+    padding: 0;
+}
+
+.home-container {
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FFFFFF;
+    padding: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.menu-icon {
+    font-size: 24px;
+    color: #000000;
+    cursor: pointer;
+}
+
+.logo {
+    height: 40px;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.content {
+    padding: 20px;
+}
+
+.left-section {
+    margin-bottom: 20px;
+}
+
+.date-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.sun-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.date {
+    font-size: 14px;
+    font-weight: 700;
+    color: #003399;
+
+}
+
+.greeting {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Aligns with the date text */
+}
+
+.greeting h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #003399;
+    margin: 0;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.search-bar input {
+    width: calc(100% - 50px); /* Adjust width to accommodate the icon */
+    padding: 15px 40px 15px 15px; /* Increase right padding for the icon */
+    border: 1px solid #D9D9D9;
+    border-radius: 25px;
+    background: #FFFFFF;
+    outline: none;
+    font-size: 16px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6F6F6F;
+    font-size: 20px;
+}
+
+.mascot-section {
+    background: #DEE7F9;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    color: #FFFFFF;
+}
+
+.mascot-image {
+    width: 146px;
+    height: 168px;
+    margin-right: 20px;
+}
+
+.mascot-text {
+    flex: 1;
+}
+
+.mascot-text h2 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #003399;
+}
+
+.learn-more-btn {
+    background:#003399;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.carousel-dots {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.carousel-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #D9D9D9;
+    margin: 0 5px;
+}
+
+.carousel-dot.active {
+    background: #003399;
+}

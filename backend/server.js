@@ -202,6 +202,25 @@ app.get('/user-points/:userId', verifyJWT, (req, res) => {
     });
 });
 
+//get user info
+app.get('/user/:id', (req, res) => {
+    const userId = req.params.id;
+    // Fetch the user data from your database
+    const query = 'SELECT name, mob FROM users WHERE id = ?';
+    db.query(query, [userId], (error, results) => {
+      if (error) {
+        res.status(500).json({ message: 'Error fetching user data' });
+      } else {
+        if (results.length > 0) {
+          res.json(results[0]);
+        } else {
+          res.status(404).json({ message: 'User not found' });
+        }
+      }
+    });
+  });
+  
+
 
 // Endpoint to save an answer
 app.post('/save-answer', verifyJWT, (req, res) => {

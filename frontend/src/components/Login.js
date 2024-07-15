@@ -21,7 +21,7 @@ const Login = () => {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user_id', response.data.user_id);
                 alert('Logging in...');
-                navigate('/dashboard');
+                navigate('/home');
             })
             .catch(error => {
                 setError('Wrong email/password');

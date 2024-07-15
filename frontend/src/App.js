@@ -4,11 +4,12 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import PlayAndEarn from './components/PlayAndEarn';
-import Navbar from './components/Navbar';
 import Wallet from './components/Wallet';
 import SplashScreen from './components/SplashScreen'; 
 import GetStarted from './components/GetStarted';
 import OtpVerification from './components/OtpVerification';
+import Home from './components/Home';
+import SideMenu from './components/SideMenu';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -49,6 +50,8 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/play-and-earn" element={<PlayAndEarn />} />
                   <Route path="/wallet" element={<Wallet />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/side-menu" element={<SideMenu />} />
               </Routes>
           </div>
       </Router>
