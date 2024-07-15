@@ -2,7 +2,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    background-color: #DEE7F9;
+    background-color: #ffffff;
     margin: 0;
     padding: 0;
 }
@@ -31,6 +31,7 @@ body {
 }
 
 .profile-icon {
+    margin-left: auto;
     width: 40px;
     height: 40px;
 }

@@ -12,6 +12,7 @@ import Home from './components/Home';
 import SideMenu from './components/SideMenu';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import ReferAndEarn from './components/ReferAndEarn';
 
 function App() {
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -52,6 +53,7 @@ function App() {
                   <Route path="/wallet" element={<Wallet />} />
                   <Route path="/home" element={<Home />} />
                   <Route path="/side-menu" element={<SideMenu />} />
+                  <Route path='/refer-earn' element={ <ReferAndEarn/>} />
               </Routes>
           </div>
       </Router>
