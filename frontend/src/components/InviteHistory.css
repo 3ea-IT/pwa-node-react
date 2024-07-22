@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+.invite-history-container {
+    font-family: 'Open Sans', sans-serif;
+    background: #ffffff;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.back-icon {
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.header h2 {
+    margin-top: 6px;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.earned-points-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #DEE7F9;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    margin-top: 60px;  /* Added gap between header and earned-points-section */
+    position: relative; /* Added position relative */
+}
+
+.points-info {
+    text-align: left;
+}
+
+.points-info h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.points-info h1 {
+    margin: 2px 8px 0;
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.wallet-icon {
+    width: 100px;
+    height: 100px;
+    position: absolute; /* Added position absolute */
+    right: 0;
+    top: -17px; /* Adjust top to pop out of the box */
+}
+
+.recent-invites-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.recent-invites-header {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.recent-invites-section {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px; /* Added gap between boxes */
+}
+
+.recent-invite {
+    display: flex;
+    align-items: center;
+    background: #DEE7F9;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.recent-invite img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.recent-invite div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center text vertically */
+}
+
+.recent-invite h3 {
+    margin: 0;
+    color: #000000;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.recent-invite h4 {
+    margin: 0;
+    color: #6F6F6F;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.recent-invite p {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 700;
+    color: #6F6F6F;
+}
+
+.invited-friends-section {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.invited-friends-section h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color:#003399;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.sort-icon {
+    cursor: pointer;
+}
+
+.friend {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.friend img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.friend-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.friend-info h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #003399;
+}
+
+.friend-info p {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 800;
+    color: #6F6F6F;
+}
+
+.pointsinfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: auto;
+}
+
+.points-earned {
+    font-size: 10px;
+    font-size: 700;
+    color: #898282;
+    margin: 0;
+}
+
+.points {
+    font-size: 18px;
+    font-weight: 700;
+    color: #6F6F6F;
+    margin: 0;
+}
