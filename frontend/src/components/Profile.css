@@ -1,0 +1,143 @@
+body {
+    background-color: #FAFAFA;
+  }
+  
+  .profile-container {
+    font-family: 'Open Sans', sans-serif;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #FAFAFA;
+    border-radius: 20px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 30px;
+  }
+  
+  .profile-header h1 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #000000;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .menu-icon {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    left: 0;
+  }
+  
+  .profile-info {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .profile-pic-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profile-pic {
+    width: 100px;
+    height: 100px;
+    /* border-radius: 50%;
+    border: 2px solid #D9D9D9; */
+  }
+  
+  .camera-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 34px;
+    height: 34px;
+  }
+  
+  .profile-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: #003399;
+    margin: 10px 0;
+  }
+  
+  .profile-details {
+    background-color: #FFFFFF;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #000000;
+    color: #727272;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .profile-detail-item span {
+    flex: 1;
+  }
+  
+  .profile-detail-item span:first-child {
+    color: #000000;
+    text-align: left;
+  }
+  
+  .profile-detail-item span:last-child {
+    text-align: right;
+  }
+  
+  .profile-detail-item:last-child {
+    border-bottom: none;
+  }
+  
+  .right-arrow {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .profile-actions {
+    margin-top: 20px;
+  }
+  
+  .profile-action-box {
+    background-color: #FFFFFF;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-action-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .profile-action-item img:first-child {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+  }
+  
+  .profile-action-item span {
+    text-align: left;
+    flex: 1;
+  }
+  

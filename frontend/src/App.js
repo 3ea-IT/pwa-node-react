@@ -12,8 +12,9 @@ import Home from './components/Home';
 import SideMenu from './components/SideMenu';
 import ReferAndEarn from './components/ReferAndEarn';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
 import InviteHistory from './components/InviteHistory';
+import Profile from './components/Profile';
+import './App.css';
 
 function App() {
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -56,6 +57,7 @@ function App() {
                   <Route path="/side-menu" element={<SideMenu />} />
                   <Route path='/refer-earn' element={ <ReferAndEarn/>} />
                   <Route path='/invite-history' element={ <InviteHistory/>} />
+                  <Route path='/profile' element={ <Profile/>} />
               </Routes>
           </div>
       </Router>

@@ -7,7 +7,7 @@ import profile2 from './assets/profileicon.png';
 import sort from './assets/sort.png';
 import './InviteHistory.css';
 
-const InviteHistory = ({ history }) => {
+const InviteHistory = () => {
     const navigate = useNavigate();
 
     const handleBack = () => {

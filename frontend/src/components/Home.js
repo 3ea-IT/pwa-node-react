@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import SideMenu from './SideMenu';
 import profileicon from './assets/profileicon.png';
@@ -12,6 +13,12 @@ const Home = () => {
     const [showMenu, setShowMenu] = useState(false);
     const date = new Date();
 
+    const navigate = useNavigate();
+
+    const handleBack = () => {
+        navigate('/profile');  // Navigate to the Refer and Earn page
+    };
+
     useEffect(() => {
         const userId = localStorage.getItem('user_id');
         fetch(`http://localhost:5000/user/${userId}`)
@@ -24,7 +31,7 @@ const Home = () => {
         <div className="home-container">
             <div className="header">
                 <FaBars className="menu-icon" onClick={() => setShowMenu(true)} />
-                <img src={profileicon} alt="Profile" className="profile-icon" />
+                <img src={profileicon} alt="Profile" className="profile-icon" onClick={handleBack}/>
             </div>
             {showMenu && <SideMenu closeMenu={() => setShowMenu(false)} />}
             <div className="content">
