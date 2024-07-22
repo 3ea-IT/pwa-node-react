@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
-import PlayAndEarn from './components/PlayAndEarn';
 import Wallet from './components/Wallet';
 import SplashScreen from './components/SplashScreen'; 
 import GetStarted from './components/GetStarted';
@@ -15,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import InviteHistory from './components/InviteHistory';
 import Profile from './components/Profile';
 import PlayEarn from './components/PlayEarn';
+import Quiz from './components/Quiz';
 import './App.css';
 
 function App() {
@@ -52,7 +52,7 @@ function App() {
                   <Route path="/otp-verification" element={<OtpVerification />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/quiz" element={<PlayAndEarn />} />
+                  <Route path="/quiz" element={<Quiz />} />
                   <Route path="/wallet" element={<Wallet />} />
                   <Route path="/home" element={<Home />} />
                   <Route path="/side-menu" element={<SideMenu />} />

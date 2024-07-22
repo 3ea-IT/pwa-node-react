@@ -25,7 +25,7 @@ const PlayEarn = () => {
       </div>
       <div className="games">
         <div className="game-card">
-          <div className="play-button">Play</div>
+          <a className="play-button" href="/quiz">Play</a>
           <br></br>
           <img src={quizIcon} alt="Tictactoe" className="game-icon" />
           <br></br>
