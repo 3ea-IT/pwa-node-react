@@ -14,6 +14,7 @@ import ReferAndEarn from './components/ReferAndEarn';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import InviteHistory from './components/InviteHistory';
 import Profile from './components/Profile';
+import PlayEarn from './components/PlayEarn';
 import './App.css';
 
 function App() {
@@ -51,13 +52,14 @@ function App() {
                   <Route path="/otp-verification" element={<OtpVerification />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/play-and-earn" element={<PlayAndEarn />} />
+                  <Route path="/quiz" element={<PlayAndEarn />} />
                   <Route path="/wallet" element={<Wallet />} />
                   <Route path="/home" element={<Home />} />
                   <Route path="/side-menu" element={<SideMenu />} />
                   <Route path='/refer-earn' element={ <ReferAndEarn/>} />
                   <Route path='/invite-history' element={ <InviteHistory/>} />
                   <Route path='/profile' element={ <Profile/>} />
+                  <Route path="/playearn" element={<PlayEarn />} />
               </Routes>
           </div>
       </Router>

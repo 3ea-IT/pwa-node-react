@@ -1,0 +1,108 @@
+body {
+    background-color: #FAFAFA;
+  }
+  
+  .playearn-container {
+    font-family: 'Open Sans', sans-serif;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #FAFAFA;
+    border-radius: 20px;
+  }
+  
+  .playearn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .header-title1 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #000000;
+    flex-grow: 1;
+    text-align: center;
+    margin-left: 80px !important; 
+  }
+  
+  .menu-icon {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .points-container {
+    display: flex;
+    align-items: center;
+    background-color: #003399;
+    color: #FFFFFF;
+    border-radius: 15px;
+    padding: 5px 10px;
+    margin-left: auto;
+  }
+  
+  .points-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+
+  }
+  
+  .points {
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  
+  .banner {
+    background-color: #DEE7F9;
+    border-radius: 12px;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 60px;
+    color: #000000;
+    font-size: 28px;
+    font-weight: 600;
+  }
+  
+  .games {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .game-card {
+    background-color:#DEE7F9;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  .game-icon {
+    width: 97.75px;
+    height: 85.71px;
+    margin-bottom: 10px;
+  }
+  
+  .game-name {
+    color: #000000;
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 10px;
+  }
+  
+  .play-button {
+    background-color: #FF4500;
+    color: #FFFFFF;
+    border-radius: 16px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  

@@ -39,6 +39,7 @@ body {
 
 .header-title {
     margin-top: 10px;
+    /* margin-right: 70px; */
     font-size: 16px;
     font-weight: 800;
 }

@@ -31,7 +31,7 @@ const SideMenu = ({ closeMenu }) => {
             <div className="menu-items">
                 <a href="/profile"><FaUser />Profile</a>
                 <a href="/wallet"><FaWallet />Wallet</a>
-                <a href="/play-earn"><FaGamepad />Play & Earn</a>
+                <a href="/playearn"><FaGamepad />Play & Earn</a>
                 <a href="/refer-earn"><FaShareAlt />Refer & Earn</a>
                 <button onClick={handleLogout}><FaSignOutAlt />Logout</button>
             </div>
