@@ -1,0 +1,131 @@
+.wallet-history {
+    font-family: Arial, sans-serif;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+h1 {
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.medipoints-card {
+    background-color: #DEE7F9;
+    border-radius: 30px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    filter: drop-shadow(rgb(0, 0, 0) 0.5rem 0.5rem 10px);
+}
+
+.medipoints-info h2 {
+    margin: 10px 0 0 10px;
+    color: #003399;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.points {
+    font-size: 38px;
+    font-weight: 800;
+    color: #003399;
+    margin: 0 0 0 10px;
+}
+
+.wallethistory {
+    width: 91px;
+    height: 88.78px;
+}
+
+.redeem-button {
+    background-color: #003399;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 10px;
+    width: 50%;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #000000;
+    margin-bottom: 30px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.transactions-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.transactions-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.transactions-list img {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.transaction-details {
+    flex-grow: 1;
+    text-align: left; /* Aligns text to the left */
+}
+
+.transaction-details p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.transaction-details span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+}
+
+.points1 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.points1.positive {
+    color: green;
+}
+
+.points1.negative {
+    color: red;
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './wallet.css';
 import MenuIcon from './assets/menuIcon.png';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -22,6 +23,12 @@ const Wallet = () => {
     const togglePointsVisibility = () => {
         setPointsVisible(!pointsVisible);
     };
+
+    let navigate = useNavigate(); 
+    const routeChange = () =>{ 
+        let path = `/wallet-history`; 
+        navigate(path);
+    }
 
   return (
     <div className="wallet">
@@ -67,7 +74,7 @@ const Wallet = () => {
         ))}
       </div>
 
-      <button className="history-button">View History</button>
+      <button className="history-button" onClick={routeChange}>View History</button>
     </div>
   );
 };

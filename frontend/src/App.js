@@ -15,6 +15,7 @@ import InviteHistory from './components/InviteHistory';
 import Profile from './components/Profile';
 import PlayEarn from './components/PlayEarn';
 import Quiz from './components/Quiz';
+import WalletHistory from './components/WalletHistory';
 import './App.css';
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/quiz" element={<Quiz />} />
                   <Route path="/wallet" element={<Wallet />} />
+                  <Route path="/wallet-history" element={<WalletHistory />} />
                   <Route path="/home" element={<Home />} />
                   <Route path="/side-menu" element={<SideMenu />} />
                   <Route path='/refer-earn' element={ <ReferAndEarn/>} />
