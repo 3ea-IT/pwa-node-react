@@ -4,6 +4,7 @@ import axios from 'axios';
 import leftarrow from './assets/leftarrow.png';
 import nextIcon from './assets/nextIcon.png';
 import skipIcon from './assets/skipIcon.png';
+import trophyImage from './assets/trophy.png';
 import './Quiz.css';
 
 const Quiz = () => {
@@ -108,7 +109,7 @@ const Quiz = () => {
         if (currentQuestion < 4) {
             setCurrentQuestion(currentQuestion + 1);
             setSelectedAnswer(null);
-            setTimer(1000);
+            setTimer(10);
             setAnswersCount(answersCount + 1);
         } else {
             setQuizComplete(true);
@@ -137,12 +138,20 @@ const Quiz = () => {
         <div className="quiz-container">
             <div className="quiz-header">
                 <button className="back-button" onClick={() => navigate(-1)}><img src={leftarrow}></img></button>
+                {!quizComplete && (
                 <span className="question-number">Question {currentQuestion + 1}/5</span>
+                )}
             </div>
             {quizComplete ? (
-                <div>
-                    <h1>Quiz Complete!</h1>
-                    <p>Your score: {score} / 5</p>
+                <div className="quiz-complete-container">
+                    <div className="result-card">
+                        <img src={trophyImage} alt="Trophy" className="trophy-icon" />
+                        <h2 className="result-title">Correct Answer</h2>
+                        <p className="score">{score}/5</p>
+                        <p className="congratulations">Congratulations, you've completed this quiz!</p>
+                        <p className="encouragement">Let's keep testing your knowledge by playing more quizzes.</p>
+                        <button className="explore-more-btn">Explore More</button>
+                    </div>
                 </div>
             ) : (
                 <div className="question-container">

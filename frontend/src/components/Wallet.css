@@ -1,24 +1,170 @@
-/* Wallet.css */
-
-.wallet-container {
-    text-align: center;
+.wallet {
+    font-family: 'Open Sans', sans-serif;
+    max-width: 400px;
+    margin: 20px auto;
     padding: 20px;
-}
-
-.wallet-container h1 {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+  }
+  
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 50px;
+  }
+  
+  .menu-icon {
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: 24px;
+  }
+  
+  header h1 {
+    margin: 0;
+    font-size: 16px ;
+    font-weight: 800;   
+  }
+  
+  .medipoints-container {
     margin-bottom: 20px;
-}
+  }
+  
+  .points-container {
+    background-color: #003399;
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .name-badge {
+    position: absolute;
+    top: -13px;
+    left: 0px;
+    background-color: #003399;
+    padding: 10px 20px;
+    border-radius: 100px;
+  }
+  
+  .name {
+    margin: 0;
+    background-color: #DEE7F9;
+    padding: 2px 4px;
+    border-radius: 100px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #003399;
+  }
+  
+  .points-container h2 {
+    margin: 30px 0 0px 20px;
+    font-size: 36px;
+    font-weight: 700;
+    color: #DEE7F9;
+  }
+  
+  .pointsval {
+    font-size: 48px;
+    font-weight: 800;
+    margin: 0 70px 30px 0;
+    color: #FFFFFF;
+  }
+  
+  .view-icon {
+    position: absolute;
+    right: 30px;
+    top: 100px;
+    color: #000000;
+    font-size: 30px;
+    padding: 0px 5px;
+    background-color: #DEE7F9;
+    border-radius: 50%;
+  }
 
-.wallet-container ul {
-    list-style-type: none;
-    padding: 0;
-}
+  .date-nav {
+    display: flex;
+    justify-content:right!important;
+    align-items:center;
+    margin-bottom: 20px;
+  }
 
-.wallet-container li {
-    background: #f0f0f0;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
+  .current-month {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: right !important;
+  }
+  
+  .nav-button {
+    background: none !important;
+    border: none !important;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-button img {
+    font-size: 45px;
+  }
+  
+  .left-arrow, .right-arrow {
+    font-size: 45px;
+    margin: 0 2px;
+  }
+  
+  .chart {
     display: flex;
     justify-content: space-between;
-}
+    align-items: flex-end;
+    height: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .bar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 18%;
+  }
+
+  .bar-container p{
+    font-size: 16px;
+    font-weight: 700;
+  }
+  
+  .bar {
+    width: 100%;
+    background-color: #0066cc;
+    transition: height 0.3s ease;
+  }
+  
+  .history-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #003399;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .history-button:hover {
+    background-color: #012d85;
+  }
+  

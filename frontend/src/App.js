@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
-import Wallet from './components/Wallet';
+import Wallet from './components/wallet';
 import SplashScreen from './components/SplashScreen'; 
 import GetStarted from './components/GetStarted';
 import OtpVerification from './components/OtpVerification';
