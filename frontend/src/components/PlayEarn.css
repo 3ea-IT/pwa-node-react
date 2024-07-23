@@ -31,7 +31,7 @@ body {
     height: 25px;
   }
   
-  .points-container {
+  .points-container1 {
     display: flex;
     align-items: center;
     background-color: #003399;
@@ -48,7 +48,7 @@ body {
 
   }
   
-  .points {
+  .points1 {
     color: #FFFFFF;
     font-size: 18px;
     font-weight: 700;

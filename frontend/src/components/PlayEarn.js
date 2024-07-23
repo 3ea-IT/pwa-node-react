@@ -15,9 +15,9 @@ const PlayEarn = () => {
         <img src={menuIcon} alt="Menu" className="menu-icon" onClick={() => setShowMenu(true)}/>
         <h1 className="header-title1">Play & Earn</h1>
         {showMenu && <SideMenu closeMenu={() => setShowMenu(false)} />}
-        <div className="points-container">
+        <div className="points-container1">
           <img src={wallet} alt="Points" className="points-icon" />
-          <span className="points">1220</span>
+          <span className="points1">1220</span>
         </div>
       </div>
       <div className="banner">
