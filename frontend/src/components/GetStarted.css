@@ -15,6 +15,7 @@
     max-width: 80%;
     height: auto;
     margin-bottom: 20px;
+    margin-top: 120px;
 }
 
 .get-started-title {
@@ -24,7 +25,7 @@
     line-height: 43.58px;
     text-align: center;
     color: #000;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
 }
 
 .get-started-description {
@@ -57,4 +58,5 @@
     background-color: #fff;
     color: #003399;
     border: 2px solid #003399;
+    margin-bottom: 200px;
 }
