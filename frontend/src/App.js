@@ -16,6 +16,7 @@ import Profile from './components/Profile';
 import PlayEarn from './components/PlayEarn';
 import Quiz from './components/Quiz';
 import WalletHistory from './components/WalletHistory';
+import KYC from './components/KYC';
 import './App.css';
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
                   <Route path='/invite-history' element={ <InviteHistory/>} />
                   <Route path='/profile' element={ <Profile/>} />
                   <Route path="/playearn" element={<PlayEarn />} />
+                  <Route path="/KYC" element={<KYC />} />
               </Routes>
           </div>
       </Router>
