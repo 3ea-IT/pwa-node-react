@@ -16,7 +16,7 @@ const InviteHistory = () => {
 
     return (
         <div className="invite-history-container">
-            <div className="header">
+            <div className="header-invitehistory">
                 <FaArrowLeft className="back-icon" onClick={handleBack} />
                 <h2>Invites</h2>
             </div>
@@ -59,7 +59,7 @@ const InviteHistory = () => {
                     </div>
                     <div className="pointsinfo">
                         <p className="points-earned">Points you earned</p>
-                        <p className="points">100</p>
+                        <p className="points-invite">100</p>
                     </div>
                 </div>
                 <div className="friend">
@@ -70,7 +70,7 @@ const InviteHistory = () => {
                     </div>
                     <div className="pointsinfo">
                         <p className="points-earned">Points you earned</p>
-                        <p className="points">100</p>
+                        <p className="points-invite">100</p>
                     </div>
                 </div>
                 <div className="friend">
@@ -81,7 +81,7 @@ const InviteHistory = () => {
                     </div>
                     <div className="pointsinfo">
                         <p className="points-earned">Points you earned</p>
-                        <p className="points">50</p>
+                        <p className="points-invite">50</p>
                     </div>
                 </div>
             </div>

@@ -3,9 +3,10 @@
     font-family: 'Open Sans', sans-serif;
     background: #ffffff;
     padding: 20px;
+    border-radius: 15px;
 }
 
-.header {
+.header-invitehistory {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -17,7 +18,7 @@
     font-size: 24px;
 }
 
-.header h2 {
+.header-invitehistory h2 {
     margin-top: 6px;
     flex-grow: 1;
     text-align: center;
@@ -192,7 +193,7 @@
     margin: 0;
 }
 
-.points {
+.points-invite {
     font-size: 18px;
     font-weight: 700;
     color: #6F6F6F;
