@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import './Signup.css';
 import { auth, RecaptchaVerifier, signInWithPhoneNumber } from './firebase';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -16,11 +16,13 @@ const Signup = () => {
         email: '',
         password: '',
         confirmPassword:'',
+        referralCode: '',
     });
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         // Cleanup function
@@ -32,17 +34,44 @@ const Signup = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const referralCode = queryParams.get('ref');
+        if (referralCode) {
+            setUserData((prevData) => ({ ...prevData, referralCode }));
+        }
+    }, [location]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUserData({ ...userData, [name]: value });
     };
 
+    const validateReferralCode = async (referralCode) => {
+        try {
+            const response = await axios.post('http://localhost:5000/validate-referral', { referralCode });
+            return response.data.isValid;
+        } catch (error) {
+            console.error('Error validating referral code:', error);
+            return false;
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
     
         if (userData.password !== userData.confirmPassword) {
             setError("Passwords do not match!");
             return;
+        }
+
+        if (userData.referralCode) {
+            const isValidReferral = await validateReferralCode(userData.referralCode);
+            if (!isValidReferral) {
+                setError('Invalid referral code. Please try again.');
+                return;
+            }
         }
     
         const { confirmPassword, ...data } = userData;
@@ -87,7 +116,7 @@ const Signup = () => {
         <div className="signup-container">
             <div className="signup-box">
                 <h2>Let's Get Started!</h2>
-                {error && <p className="error">{error}</p>}
+                
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <input type="text" name="name" placeholder="Full Name" value={userData.name} onChange={handleChange} required />
@@ -112,6 +141,9 @@ const Signup = () => {
                     <div className="form-group">
                         <input type="email" name="email" placeholder="Email" value={userData.email} onChange={handleChange} required />
                     </div>
+                    <div className="form-group">
+                        <input type="text" name="referralCode" placeholder="Referral Code" value={userData.referralCode} onChange={handleChange} />
+                    </div>
                     <div className="password-container">
                         <input type={passwordVisible ? "text" : "password"} name="password" placeholder="Password" value={userData.password} onChange={handleChange} required />
                         <button type="button" className="toggle-password" onClick={() => setPasswordVisible(!passwordVisible)}>
@@ -124,6 +156,7 @@ const Signup = () => {
                             {confirmPasswordVisible ? <FaEye /> : <FaEyeSlash />}
                         </button>
                     </div>
+                    {error && <p className="error">{error}</p>}
                     <button type="submit" id="sign-up-button" className="signup-button">Sign Up</button>
                 </form>
                 <p className="signin-link" onClick={handleSigninRedirect}>

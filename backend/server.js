@@ -32,14 +32,29 @@ app.use((req, res, next) => {
     next();
   });
 
-// app.post('/signup', async (req, res) => {
-//     try {
-//         const user = await createUser(req.body);
-//         res.status(201).json({ message: 'User created successfully', user });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error creating user', error });
+// Function to generate a unique referral code
+// const generateReferralCode = async () => {
+//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//     let code = '';
+//     for (let i = 0; i < 8; i++) {
+//         code += characters.charAt(Math.floor(Math.random() * characters.length));
 //     }
-// });
+//     const query = `SELECT COUNT(*) AS count FROM users WHERE referral_code = ?`;
+//     const [rows] = await db.promise().query(query, [code]);
+//     if (rows[0].count > 0) {
+//         return generateReferralCode();
+//     }
+//     return code;
+// };
+
+const generateReferralCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+};
 
 app.post('/signup', (req, res) => {
     console.log('Received signup request:', req.body);
@@ -54,6 +69,21 @@ app.post('/signup', (req, res) => {
 
     res.status(200).json({ message: 'OTP sent successfully', otp });
 });
+
+app.post('/validate-referral', (req, res) => {
+    const { referralCode } = req.body;
+    const query = 'SELECT COUNT(*) AS count FROM users WHERE referral_code = ?';
+
+    db.query(query, [referralCode], (err, results) => {
+        if (err) {
+            console.error('Error validating referral code:', err);
+            return res.status(500).json({ message: 'Server error' });
+        }
+        const isValid = results[0].count > 0;
+        res.json({ isValid });
+    });
+});
+
 // Endpoint to send OTP
 app.post('/send-otp', (req, res) => {
     const { userData } = req.body;
@@ -79,13 +109,71 @@ app.post('/verify-otp', async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(userData.password, 10);
+        let referralCode = generateReferralCode();
 
-        const insertUser = `INSERT INTO users (name, email, mob, dob, gender, password, date, pin, area, city, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        db.query(insertUser, [userData.name, userData.email, userData.mob, userData.dob, userData.gender, hashedPassword, userData.date, null, null, null, null], (err, result) => {
+        // Check if the generated referral code is unique
+        const checkUniqueCode = async (code) => {
+            const query = 'SELECT COUNT(*) AS count FROM users WHERE referral_code = ?';
+            return new Promise((resolve, reject) => {
+                db.query(query, [code], (err, results) => {
+                    if (err) return reject(err);
+                    if (results && results.length > 0) {
+                        resolve(results[0].count === 0);
+                    } else {
+                        resolve(false);
+                    }
+                });
+            });
+        };
+
+        // Ensure the referral code is unique
+        let isUnique = await checkUniqueCode(referralCode);
+        while (!isUnique) {
+            referralCode = generateReferralCode();
+            isUnique = await checkUniqueCode(referralCode);
+        }
+
+        let walletPoints = 50;
+        let referredBy = null;
+
+        if (userData.referralCode) {
+            const checkReferralCodeQuery = 'SELECT id FROM users WHERE referral_code = ?';
+            const [rows] = await db.promise().query(checkReferralCodeQuery, [userData.referralCode]);
+
+            if (rows.length > 0) {
+                referredBy = userData.referralCode;
+                walletPoints = 70;
+
+                const referringUserId = rows[0].id;
+                const updateReferrerWalletQuery = 'UPDATE users SET wallet = wallet + 100 WHERE id = ?';
+                await db.promise().query(updateReferrerWalletQuery, [referringUserId]);
+
+                const insertPointsLogReferrer = `INSERT INTO points_log (user_id, points, type, remark, source, date) VALUES (?, ?, 'cr', 'Referral bonus', 'RB', ?)`;
+                const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                await db.promise().query(insertPointsLogReferrer, [referringUserId, 100, date]);
+            } else {
+                return res.status(400).json({ message: 'Invalid referral code. Please try again.' });
+            }
+        }
+
+        const insertUser = `INSERT INTO users (name, email, mob, dob, gender, password, date, pin, area, city, state, referral_code, referred_by, wallet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        db.query(insertUser, [userData.name, userData.email, userData.mob, userData.dob, userData.gender, hashedPassword, userData.date, null, null, null, null, referralCode, referredBy, walletPoints], (err, result) => {
             if (err) {
                 res.status(500).json({ message: 'There was an error creating the account. Please try again.', error: err });
             } else {
-                res.status(200).json({ message: 'Account created successfully' });
+                const userId = result.insertId;
+                const insertPointsLogNewUser = `INSERT INTO points_log (user_id, points, type, remark, source, date) VALUES (?, ?, 'cr', ?, ?, ?)`;
+                const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                const remark = referredBy ? 'Joining Bonus via Referral' : 'Direct Joining Bonus';
+                const source = referredBy ? 'JBR' : 'DJB';
+
+                db.query(insertPointsLogNewUser, [userId, walletPoints, remark, source, date], (err, result) => {
+                    if (err) {
+                        res.status(500).json({ message: 'Error updating points log for new user', error: err });
+                    } else {
+                        res.status(200).json({ message: 'Account created successfully' });
+                    }
+                });
             }
         });
     } catch (error) {
@@ -206,19 +294,21 @@ app.get('/user-points/:userId', verifyJWT, (req, res) => {
 app.get('/user/:id', (req, res) => {
     const userId = req.params.id;
     // Fetch the user data from your database
-    const query = 'SELECT name, mob FROM users WHERE id = ?';
+    const query = 'SELECT name, mob, referral_code FROM users WHERE id = ?';
     db.query(query, [userId], (error, results) => {
-      if (error) {
-        res.status(500).json({ message: 'Error fetching user data' });
-      } else {
-        if (results.length > 0) {
-          res.json(results[0]);
+        if (error) {
+            res.status(500).json({ message: 'Error fetching user data' });
         } else {
-          res.status(404).json({ message: 'User not found' });
+            if (results.length > 0) {
+                res.json(results[0]);
+            } else if (results.length === 0) {
+                res.status(404).json({ message: 'User not found' });
+            } else {
+                res.json(results[0]);
+            }
         }
-      }
     });
-  });
+});
   
 
 

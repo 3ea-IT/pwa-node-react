@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import SideMenu from './SideMenu';
-import { FaBars, FaLinkedin, FaWhatsapp, FaFacebook, FaTimes } from 'react-icons/fa';
+import { FaBars} from 'react-icons/fa';
 import inviteIcon from './assets/inviteIcon.png';
 import whatsappIcon from './assets/whatsappIcon.png';
 import linkedinIcon from './assets/linkedinIcon.png';
@@ -10,10 +11,26 @@ import './ReferAndEarn.css';
 
 function ReferAndEarn() {
     const [showMenu, setShowMenu] = useState(false);
+    const [referralCode, setReferralCode] = useState('');
+    const userId = localStorage.getItem('user_id');
+
+    useEffect(() => {
+        const fetchReferralCode = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/user/${userId}`);
+                setReferralCode(response.data.referral_code);
+            } catch (error) {
+                console.error('Error fetching referral code:', error);
+            }
+        };
+
+        fetchReferralCode();
+    }, [userId]);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText('https://3ea.in/invite/?ref=ajsdgh');
-        alert('Link copied to clipboard!');
+        const referralLink = `http://localhost:3000/signup?ref=${referralCode}`;
+        navigator.clipboard.writeText(referralLink);
+        alert('Referral link copied to clipboard!');
     };
 
     return (
@@ -35,9 +52,9 @@ function ReferAndEarn() {
 
                     <div className="share-link">
                         <input
-                            type="text"
-                            value="https://3ea.in/invite/?ref=ajsdgh"
-                            readOnly
+                        type="text"
+                        value={`http://localhost:3000/signup?ref=${referralCode}`}
+                        readOnly
                         />
                         <button className="copy-button" onClick={handleCopy}>Copy</button>
                     </div>
