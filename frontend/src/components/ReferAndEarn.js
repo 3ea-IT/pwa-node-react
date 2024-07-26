@@ -69,7 +69,7 @@ function ReferAndEarn() {
                 <div className="rewards-info">
                     <div className="reward-box">
                         <h3>You'll get</h3>
-                        <p><img src={tick}/> 50 when friends register using your code.</p>
+                        <p><img src={tick}/> 70 when friends register using your code.</p>
                     </div>
                     <div className="reward-box">
                         <h3>They'll get</h3>
