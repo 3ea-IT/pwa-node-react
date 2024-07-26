@@ -324,6 +324,24 @@ app.get('/user/:id', (req, res) => {
     });
 });
 
+// Fetch profile details
+app.get('/user-profile/:id', (req, res) => {
+    const userId = req.params.id;
+    const query = 'SELECT name, email, dob, gender FROM users WHERE id = ?';
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Error fetching user data' });
+        } else {
+            if (results.length > 0) {
+                res.json(results[0]);
+            } else {
+                res.status(404).json({ message: 'User not found' });
+            }
+        }
+    });
+});
+
+
 //fetch wallet points
 app.get('/user-wallet/:id', (req, res) => {
     const userId = req.params.id;

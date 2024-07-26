@@ -1,5 +1,6 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Profile.css';
 import SideMenu from './SideMenu';
 import profilePic from './assets/profileicon.png'; 
@@ -11,9 +12,45 @@ import menuIcon from './assets/menuIcon.png';
 import cameraIcon from './assets/Camera.png'; 
 import rightArrow from './assets/rightArrow.png';
 
-const Profile = () => {
+// Utility function to format the date
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-CA', options); // This will return the date in YYYY-MM-DD format
+};
 
+const Profile = () => {
+    const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
+    const [profile, setProfile] = useState({
+      name: '',
+      email: '',
+      dob: '',
+      gender: ''
+  });
+
+  const handleNavigateToVitals = () => {
+    navigate('/kyc', { state: { activeTab: 'Vitals' } });
+  };
+
+  const handleNavigateToKyc = () => {
+    navigate('/kyc');
+  }
+
+  useEffect(() => {
+    const userId = localStorage.getItem('user_id');
+    if (userId) {
+        axios.get(`http://localhost:5000/user-profile/${userId}`)
+            .then(response => {
+                const profileData = response.data;
+                profileData.dob = formatDate(profileData.dob); // Format the date before setting the state
+                setProfile(profileData);
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+    }
+  }, []);
 
     return (
       <div className="profile-container">
@@ -27,22 +64,22 @@ const Profile = () => {
             <img src={profilePic} alt="Profile" className="profile-pic" />
             <img src={cameraIcon} alt="Camera" className="camera-icon" />
           </div>
-          <h2 className="profile-name">Ramesh</h2>
+          <h2 className="profile-name">{profile.name}</h2>
         </div>
         <div className="profile-details">
           <div className="profile-detail-item">
             <span>Email:</span>
-            <span>abc@example.com</span>
+            <span>{profile.email}</span>
             <img src={rightArrow} alt="Arrow" className="right-arrow" />
           </div>
           <div className="profile-detail-item">
             <span>Date of birth:</span>
-            <span>26-11-1994</span>
+            <span>{profile.dob}</span>
             <img src={rightArrow} alt="Arrow" className="right-arrow" />
           </div>
           <div className="profile-detail-item">
             <span>Gender:</span>
-            <span>abc@example.com</span>
+            <span>{profile.gender}</span>
             <img src={rightArrow} alt="Arrow" className="right-arrow" />
           </div>
         </div>
@@ -51,14 +88,14 @@ const Profile = () => {
             <div className="profile-action-item">
               <img src={vitalsIcon} alt="Vitals" />
               <span>Your vitals</span>
-              <img src={rightArrow} alt="Arrow" className="right-arrow" />
+              <img src={rightArrow} alt="Arrow" className="right-arrow" onClick={handleNavigateToVitals} />
             </div>
           </div>
           <div className="profile-action-box">
             <div className="profile-action-item">
-              <img src={otherDetailsIcon} alt="Other details" />
+              <img src={otherDetailsIcon} alt="Other details"/>
               <span>Other details</span>
-              <img src={rightArrow} alt="Arrow" className="right-arrow" />
+              <img src={rightArrow} alt="Arrow" className="right-arrow"  onClick={handleNavigateToKyc} />
             </div>
             <div className="profile-action-item">
               <img src={changePasswordIcon} alt="Change password" />

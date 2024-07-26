@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './KYC.css';
 import backIcon from './assets/leftarrow.png';
 import maleIcon from './assets/male.png';
@@ -6,6 +7,7 @@ import femaleIcon from './assets/female.png';
 import checkIcon from './assets/checkmarker.png';
 
 const KYC = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('Basic');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -22,6 +24,12 @@ const KYC = () => {
     age: 28,
     allergies: ''
   });
+
+  useEffect(() => {
+    if (location.state && location.state.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   const medicalQuestions = [
     "Do you have any allergies?",

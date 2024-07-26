@@ -9,6 +9,7 @@ body {
     padding: 20px;
     background-color: #FAFAFA;
     border-radius: 20px;
+    margin-top: 20px;
   }
   
   .profile-header {
@@ -88,6 +89,7 @@ body {
   }
   
   .profile-detail-item span {
+    position:relative;
     flex: 1;
   }
   
@@ -107,6 +109,11 @@ body {
   .right-arrow {
     width: 12px;
     height: 12px;
+  }
+
+  .right-arrow:hover{
+    width: 15px;
+    height: 15px;
   }
   
   .profile-actions {
