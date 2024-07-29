@@ -207,10 +207,10 @@ const Quiz = () => {
                             </div>
                         )}
                     </div>
-                    <div className="nav-buttons">
-                        <button className="nav-button answer-count"><span>{answersCount}/5</span><br></br>Answers</button>
-                        <button className="nav-button next" onClick={handleNext}><img src={nextIcon}></img><br></br>Next</button>
-                        <button className="nav-button skip" onClick={handleNext}><img src={skipIcon}></img><br></br>Skip</button>
+                    <div className="nav-buttons-quiz">
+                        <button className="nav-button-quiz answer-count"><span>{answersCount}/5</span><br></br>Answers</button>
+                        <button className="nav-button-quiz next" onClick={handleNext}><img src={nextIcon}></img><br></br>Next</button>
+                        <button className="nav-button-quiz skip" onClick={handleNext}><img src={skipIcon}></img><br></br>Skip</button>
                     </div>
                 </div>
             )}

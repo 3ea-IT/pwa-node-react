@@ -463,6 +463,8 @@ app.post('/save-quiz-result', verifyJWT, (req, res) => {
 
     const insertResult = `INSERT INTO playearn (user_id, result, points, date) VALUES (?, ?, ?, ?)`;
     const insertPointsLog = `INSERT INTO points_log (user_id, points, type, remark, source, date) VALUES (?, ?, ?, ?, ?, ?)`;
+    const getUserWallet = `SELECT wallet FROM users WHERE id = ?`;
+    const updateUserWallet = `UPDATE users SET wallet = ? WHERE id = ?`;
 
     db.query(insertResult, [req.userId, score, points, date], (err, result) => {
         if (err) {
@@ -473,7 +475,24 @@ app.post('/save-quiz-result', verifyJWT, (req, res) => {
                 if (err) {
                     res.status(500).json({ message: 'Error saving points log', error: err });
                 } else {
-                    res.status(200).json({ message: 'Quiz result and points log saved successfully' });
+                    // Fetch the current wallet points
+                    db.query(getUserWallet, [req.userId], (err, walletResult) => {
+                        if (err) {
+                            res.status(500).json({ message: 'Error fetching wallet points', error: err });
+                        } else {
+                            const currentWalletPoints = walletResult[0].wallet;
+                            const updatedWalletPoints = currentWalletPoints + points;
+
+                            // Update the wallet points in the users table
+                            db.query(updateUserWallet, [updatedWalletPoints, req.userId], (err, updateResult) => {
+                                if (err) {
+                                    res.status(500).json({ message: 'Error updating wallet points', error: err });
+                                } else {
+                                    res.status(200).json({ message: 'Quiz result, points log, and wallet updated successfully' });
+                                }
+                            });
+                        }
+                    });
                 }
             });
         }
