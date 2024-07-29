@@ -304,6 +304,33 @@ app.get('/user-points/:userId', verifyJWT, (req, res) => {
     });
 });
 
+// Fetch monthly points history for the user
+app.get('/user-points-history/:id', async (req, res) => {
+    const userId = req.params.id;
+    try {
+      const query = `
+        SELECT DATE_FORMAT(date, '%Y-%m') as month, SUM(points) as value
+        FROM points_log
+        WHERE user_id = ?
+        GROUP BY DATE_FORMAT(date, '%Y-%m')
+        ORDER BY DATE_FORMAT(date, '%Y-%m') DESC
+        LIMIT 5;
+      `;
+      const [results] = await db.execute(query, [userId]);
+  
+      // Prepare data to send to the frontend
+      const data = results.map(result => ({
+        month: result.month,
+        value: result.value
+      }));
+  
+      res.json(data);
+    } catch (error) {
+      console.error('Error fetching user points history:', error);
+      res.status(500).json({ message: 'Error fetching user points history.' });
+    }
+  });  
+
 //get user info
 app.get('/user/:id', (req, res) => {
     const userId = req.params.id;
