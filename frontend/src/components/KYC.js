@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './KYC.css';
 import backIcon from './assets/leftarrow.png';
 import maleIcon from './assets/male.png';
@@ -8,6 +8,7 @@ import checkIcon from './assets/checkmarker.png';
 
 const KYC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Basic');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -177,7 +178,7 @@ const KYC = () => {
   return (
     <div className="kyc-container">
       <div className="kyc-header">
-        <img src={backIcon} alt="Back" className="back-icon" />
+        <img src={backIcon} alt="Back" className="back-icon" onClick={() => navigate(-1)} />
         <h1>KYC</h1>
       </div>
       {!isCompleted ? (

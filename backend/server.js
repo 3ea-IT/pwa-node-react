@@ -316,7 +316,7 @@ app.get('/user-points-history/:id', async (req, res) => {
         ORDER BY DATE_FORMAT(date, '%Y-%m') DESC
         LIMIT 5;
       `;
-      const [results] = await db.execute(query, [userId]);
+      const [results] = await db.promise().query(query, [userId]);
   
       // Prepare data to send to the frontend
       const data = results.map(result => ({
@@ -369,7 +369,7 @@ app.get('/user-profile/:id', (req, res) => {
 });
 
 
-//fetch wallet points
+// Fetch wallet points for the user
 app.get('/user-wallet/:id', (req, res) => {
     const userId = req.params.id;
     const query = 'SELECT wallet FROM users WHERE id = ?';
@@ -381,6 +381,26 @@ app.get('/user-wallet/:id', (req, res) => {
         }
     });
 });
+
+// Fetch recent transactions for the user
+app.get('/transactions/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const query = `
+      SELECT points, type, source, date 
+      FROM points_log 
+      WHERE user_id = ? 
+      ORDER BY date DESC 
+      LIMIT 5
+    `;
+    try {
+      const [rows] = await db.promise().query(query, [userId]);
+      res.status(200).json({ transactions: rows });
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      res.status(500).json({ message: 'Error fetching transactions.', error });
+    }
+  });
+  
 
 // Fetch recent invites with points earned by the user making referrals
 app.get('/recent-invites/:referralCode', (req, res) => {

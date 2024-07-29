@@ -7,6 +7,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import LeftArrow from './assets/navleftarrow.png';
 import RightArrow from './assets/navrightarrow.png';
 import SideMenu from './SideMenu';
+import { format } from 'date-fns';
 
 const Wallet = () => {
   const [userName, setUserName] = useState('');
@@ -25,9 +26,14 @@ const Wallet = () => {
 
         setUserName(userResponse.data.name);
         setMediPoints(walletResponse.data.wallet);
-        setChartData(pointsResponse.data);
 
-        console.log('Chart Data:', pointsResponse.data); // Log chart data for debugging
+        const processedChartData = pointsResponse.data.map(data => ({
+          month: format(new Date(`${data.month}-01`), 'MMM'), // Format to short month name
+          value: data.value
+        }));
+
+        setChartData(processedChartData);
+        console.log('Chart Data:', processedChartData); // Log chart data for debugging
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -86,7 +92,7 @@ const Wallet = () => {
             <div key={index} className="bar-container">
               <div 
                 className="bar" 
-                style={{ height: `${data.value}px` }} // Ensure the height is set in pixels
+                style={{ height: `${data.value}px` }} // Ensure the height is set in pixels and scaled appropriately
               ></div>
               <p>{data.month}</p>
             </div>
