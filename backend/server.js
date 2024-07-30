@@ -499,6 +499,156 @@ app.post('/save-quiz-result', verifyJWT, (req, res) => {
     });
 });
 
+// Fetch KYC data for the user
+app.get('/kyc/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const query = 'SELECT * FROM kyc WHERE user_id = ?';
+  
+    db.query(query, [userId], (error, results) => {
+      if (error) {
+        res.status(500).json({ message: 'Error fetching KYC data', error });
+      } else {
+        res.status(200).json(results[0]);
+      }
+    });
+  });
+  
+  app.post('/save-kyc', verifyJWT, (req, res) => {
+    const { userId, pincode, area, city, state, country, gender, height, weight, bloodGroup, age } = req.body;
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    const checkQuery = 'SELECT * FROM kyc WHERE user_id = ?';
+    const updateQueryBasic = 'UPDATE kyc SET pincode = ?, area = ?, city = ?, state = ?, country = ? WHERE user_id = ?';
+    const updateQueryVitals = 'UPDATE kyc SET gender = ?, height = ?, weight = ?, blood_group = ?, age = ? WHERE user_id = ?';
+    const insertQuery = 'INSERT INTO kyc (user_id, pincode, area, city, state, country, gender, height, weight, blood_group, age) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+    const logQuery = 'INSERT INTO kyc_logs (user_id, type, remark, date) VALUES (?, ?, ?, ?)';
+    const vitalsQuery = 'INSERT INTO vitals (user_id, weight, date) VALUES (?, ?, ?)';
+
+    db.query(checkQuery, [userId], (err, results) => {
+        if (err) {
+            console.error('Error checking KYC data:', err);
+            res.status(500).json({ message: 'Error checking KYC data', error: err });
+        } else if (results.length > 0) {
+            // User already has KYC data
+            const existingData = results[0];
+
+            if (pincode || area || city || state || country) {
+                const updateValues = [pincode, area, city, state, country, userId];
+                db.query(updateQueryBasic, updateValues, (err, updateResult) => {
+                    if (err) {
+                        console.error('Error updating KYC data:', err);
+                        res.status(500).json({ message: 'Error updating KYC data', error: err });
+                    } else {
+                        const fieldsToUpdate = { pincode, area, city, state, country };
+                        Object.keys(fieldsToUpdate).forEach(field => {
+                            if (fieldsToUpdate[field] && fieldsToUpdate[field] !== existingData[field]) {
+                                db.query(logQuery, [userId, field, existingData[field] ? 'updated' : 'added', date], (logErr) => {
+                                    if (logErr) {
+                                        console.error(`Error updating KYC log for ${field}:`, logErr);
+                                    }
+                                });
+                            }
+                        });
+                        res.status(200).json({ message: 'KYC basic data updated successfully' });
+                    }
+                });
+            }
+
+            if (gender || height || weight || bloodGroup || age) {
+                const updateValues = [gender, height, weight, bloodGroup, age, userId];
+                db.query(updateQueryVitals, updateValues, (err, updateResult) => {
+                    if (err) {
+                        console.error('Error updating KYC data:', err);
+                        res.status(500).json({ message: 'Error updating KYC data', error: err });
+                    } else {
+                        const fieldsToUpdate = { gender, height, weight, bloodGroup, age };
+                        Object.keys(fieldsToUpdate).forEach(field => {
+                            if (fieldsToUpdate[field] && fieldsToUpdate[field] !== existingData[field]) {
+                                const remark = existingData[field] ? 'updated' : 'added';
+                                db.query(logQuery, [userId, field, remark, date], (logErr) => {
+                                    if (logErr) {
+                                        console.error(`Error updating KYC log for ${field}:`, logErr);
+                                    }
+                                });
+
+                                if (field === 'weight') {
+                                    db.query(vitalsQuery, [userId, weight, date], (vitalsErr) => {
+                                        if (vitalsErr) {
+                                            console.error('Error updating vitals data:', vitalsErr);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        res.status(200).json({ message: 'KYC vitals data updated successfully' });
+                    }
+                });
+            }
+        } else {
+            const insertValues = [userId, pincode, area, city, state, country, gender, height, weight, bloodGroup, age];
+            db.query(insertQuery, insertValues, (err, insertResult) => {
+                if (err) {
+                    console.error('Error inserting KYC data:', err);
+                    res.status(500).json({ message: 'Error inserting KYC data', error: err });
+                } else {
+                    const fieldsToInsert = { pincode, area, city, state, country, gender, height, weight, bloodGroup, age };
+                    Object.keys(fieldsToInsert).forEach(field => {
+                        if (fieldsToInsert[field]) {
+                            db.query(logQuery, [userId, field, 'added', date], (logErr) => {
+                                if (logErr) {
+                                    console.error(`Error logging KYC insertion for ${field}:`, logErr);
+                                }
+                            });
+
+                            if (field === 'weight') {
+                                db.query(vitalsQuery, [userId, weight, date], (vitalsErr) => {
+                                    if (vitalsErr) {
+                                        console.error('Error inserting vitals data:', vitalsErr);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    res.status(200).json({ message: 'KYC data inserted successfully' });
+                }
+            });
+        }
+    });
+});
+
+
+  // Log KYC updates
+  function logKYCUpdate(userId, newData) {
+    const query = 'INSERT INTO kyc_logs (user_id, type, remark) VALUES (?, ?, ?)';
+    const fields = ['pincode', 'area', 'city', 'state', 'country', 'gender', 'height', 'weight', 'bloodGroup', 'age'];
+    
+    db.query('SELECT * FROM kyc WHERE user_id = ?', [userId], (err, oldData) => {
+      if (err) {
+        console.error('Error fetching old KYC data:', err);
+      } else {
+        fields.forEach((field) => {
+          if (newData[field] !== undefined) {
+            if (!oldData[0][field]) {
+              db.query(query, [userId, field, 'added'], (error, results) => {
+                if (error) {
+                  console.error('Error logging KYC update (added):', error);
+                }
+              });
+            } else if (oldData[0][field] !== newData[field]) {
+              db.query(query, [userId, field, 'updated'], (error, results) => {
+                if (error) {
+                  console.error('Error logging KYC update (updated):', error);
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  }  
+
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

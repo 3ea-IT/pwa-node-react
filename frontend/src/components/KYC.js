@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './KYC.css';
 import backIcon from './assets/leftarrow.png';
 import maleIcon from './assets/male.png';
@@ -13,24 +14,47 @@ const KYC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [formData, setFormData] = useState({
-    pincode: '226010',
-    area: 'Gomti Nagar',
-    city: 'Lucknow',
-    state: 'Uttar Pradesh',
-    country: 'India',
-    gender: 'Male',
-    height: 171,
-    weight: 70,
-    bloodGroup: 'A+',
-    age: 28,
-    allergies: ''
+    pincode: '',
+    area: '',
+    city: '',
+    state: '',
+    country: '',
+    gender: '',
+    height: '',
+    weight: '',
+    bloodGroup: '',
+    age: ''
   });
+
+  const userId = localStorage.getItem('user_id');
 
   useEffect(() => {
     if (location.state && location.state.activeTab) {
       setActiveTab(location.state.activeTab);
     }
-  }, [location.state]);
+
+    // Fetch existing KYC data
+    axios.get(`http://localhost:5000/kyc/${userId}`)
+      .then(response => {
+        if (response.data) {
+          setFormData({
+            pincode: response.data.pincode || '',
+            area: response.data.area || '',
+            city: response.data.city || '',
+            state: response.data.state || '',
+            country: response.data.country || '',
+            gender: response.data.gender || '',
+            height: response.data.height || '',
+            weight: response.data.weight || '',
+            bloodGroup: response.data.blood_group || '',
+            age: response.data.age || ''
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching KYC data:', error);
+      });
+  }, [location.state, userId]);
 
   const medicalQuestions = [
     "Do you have any allergies?",
@@ -46,18 +70,58 @@ const KYC = () => {
   };
 
   const handleNext = () => {
+    const token = localStorage.getItem('token');  // Get the token from local storage
+
+    if (!token) {
+        console.error('No token found. User might not be logged in.');
+        // Handle this case, perhaps by redirecting to the login page
+        return;
+    }
+
+    const config = {
+        headers: { 'x-access-token': token }  // Use 'x-access-token' as the header name
+    };
+
+    let dataToSend = { userId };
     if (activeTab === 'Basic') {
-      setActiveTab('Vitals');
+        dataToSend = {
+            ...dataToSend,
+            pincode: formData.pincode,
+            area: formData.area,
+            city: formData.city,
+            state: formData.state,
+            country: formData.country
+        };
     } else if (activeTab === 'Vitals') {
-      setActiveTab('Medical');
+        dataToSend = {
+            ...dataToSend,
+            gender: formData.gender,
+            height: formData.height,
+            weight: formData.weight,
+            bloodGroup: formData.bloodGroup,
+            age: formData.age
+        };
     } else if (activeTab === 'Medical') {
       if (currentQuestion < medicalQuestions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
+          setCurrentQuestion(currentQuestion + 1);
       } else {
-        setIsCompleted(true);
+          setIsCompleted(true);
       }
-    }
-  };
+  }
+
+    axios.post('http://localhost:5000/save-kyc', dataToSend, config)
+        .then(response => {
+            console.log(`KYC ${activeTab.toLowerCase()} data saved successfully:`, response.data);
+            if (activeTab === 'Basic') {
+                setActiveTab('Vitals');
+            } else {
+                setActiveTab('Medical');
+            }
+        })
+        .catch(error => {
+            console.error(`Error saving KYC ${activeTab.toLowerCase()} data:`, error);
+        });
+};
 
   const renderBasicTab = () => (
     <div className="basic-tab">
@@ -128,6 +192,7 @@ const KYC = () => {
         <div className="input-group1">
           <label>Blood Group</label>
           <select name="bloodGroup" value={formData.bloodGroup} onChange={handleInputChange}>
+            <option value="">Select Blood Group</option>
             <option value="A+">A+</option>
             <option value="B+">B+</option>
             <option value="O+">O+</option>
