@@ -12,7 +12,7 @@ const PlayEarn = () => {
 
     useEffect(() => {
         const userId = localStorage.getItem('user_id');
-        axios.get(`http://localhost:5000/user-wallet/${userId}`)
+        axios.get(`${process.env.REACT_APP_API_URL}user-wallet/${userId}`)
             .then(response => {
                 setPoints(response.data.wallet);
             })

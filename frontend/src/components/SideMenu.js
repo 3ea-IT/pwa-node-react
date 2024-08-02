@@ -14,7 +14,7 @@ const SideMenu = ({ closeMenu }) => {
     const [userData, setUserData] = React.useState({});
 
     React.useEffect(() => {
-        fetch(`http://localhost:5000/user/${userId}`)
+        fetch(`${process.env.REACT_APP_API_URL}user/${userId}`)
             .then(response => response.json())
             .then(data => setUserData(data))
             .catch(error => console.error('Error fetching user data:', error));

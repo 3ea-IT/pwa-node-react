@@ -512,6 +512,19 @@ app.get('/kyc/:userId', (req, res) => {
       }
     });
   });
+
+//Fetch medical Questions
+app.get('/medical-questions', verifyJWT, (req, res) => {
+    const query = 'SELECT * FROM medical_questionnaire';
+    db.query(query, (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Error fetching medical questions', error });
+        } else {
+            res.status(200).json(results);
+        }
+    });
+});
+
   
   app.post('/save-kyc', verifyJWT, (req, res) => {
     const { userId, pincode, area, city, state, country, gender, height, weight, bloodGroup, age } = req.body;
@@ -646,7 +659,41 @@ app.get('/kyc/:userId', (req, res) => {
         });
       }
     });
-  }  
+  }
+  
+  // Save medical answers
+  app.post('/save-medical-answers', verifyJWT, (req, res) => {
+    const { userId, answers } = req.body;
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    if (!userId || !answers) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const insertAnswer = 'INSERT INTO answers_medical (user_id, ques_id, ans, date) VALUES (?, ?, ?, ?)';
+    const answerQueries = answers.map(answer => {
+        return new Promise((resolve, reject) => {
+            db.query(insertAnswer, [userId, answer.question_id, answer.answer, date], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    });
+
+    Promise.all(answerQueries)
+        .then(results => {
+            res.status(200).json({ message: 'Medical answers saved successfully' });
+        })
+        .catch(error => {
+            console.error('Error saving medical answers:', error);
+            res.status(500).json({ message: 'Error saving medical answers', error });
+        });
+});
+
+
 
 
 app.listen(port, () => {

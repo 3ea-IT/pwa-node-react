@@ -17,7 +17,7 @@ const Wallet = () => {
         
         console.log('Fetching points for user:', userId);
         
-        axios.get(`http://localhost:5000/user-points/${userId}`, {
+        axios.get(`${process.env.REACT_APP_API_URL}user-points/${userId}`, {
             headers: {
                 'x-access-token': token
             }

@@ -20,9 +20,9 @@ const Wallet = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userResponse = await axios.get(`http://localhost:5000/user/${userId}`);
-        const walletResponse = await axios.get(`http://localhost:5000/user-wallet/${userId}`);
-        const pointsResponse = await axios.get(`http://localhost:5000/user-points-history/${userId}`);
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}user/${userId}`);
+        const walletResponse = await axios.get(`${process.env.REACT_APP_API_URL}user-wallet/${userId}`);
+        const pointsResponse = await axios.get(`${process.env.REACT_APP_API_URL}user-points-history/${userId}`);
 
         setUserName(userResponse.data.name);
         setMediPoints(walletResponse.data.wallet);

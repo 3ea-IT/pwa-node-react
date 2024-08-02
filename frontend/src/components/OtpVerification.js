@@ -76,7 +76,7 @@ const OtpVerification = () => {
             const date = new Date().toISOString().slice(0, 10);
             const data = { ...userData, date };
     
-            await axios.post('http://localhost:5000/verify-otp', { userData: data });
+            await axios.post(`${process.env.REACT_APP_API_URL}verify-otp`, { userData: data });
             alert('You have successfully signed up!');
             navigate('/login');
         } catch (error) {
@@ -108,7 +108,7 @@ const OtpVerification = () => {
     const handleSaveNumber = async () => {
         try {
             console.log('Sending update request with:', { oldMob: userData.mob, newMob });
-            const response = await axios.post('http://localhost:5000/update-phone', {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}update-phone`, {
                 oldMob: userData.mob,
                 newMob: newMob
             });

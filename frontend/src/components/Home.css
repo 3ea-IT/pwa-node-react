@@ -112,7 +112,7 @@ body {
 }
 
 .mascot-image {
-    width: 146px;
+    width: 126px;
     height: 168px;
     margin-right: 20px;
 }
@@ -155,4 +155,52 @@ body {
 
 .carousel-dot.active {
     background: #003399;
+}
+
+.popular-medicine-section {
+    margin-top: 20px;
+}
+
+.popular-medicine-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.popular-medicine-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: #000000;
+}
+
+.see-all-link {
+    font-size: 12px;
+    font-weight: 800;
+    color: #000000;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.medicine-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.medicine-item {
+    width: calc(33.333% - 10px);
+    text-align: center;
+}
+
+.medicine-image {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.medicine-name {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #2D2D2D;
 }

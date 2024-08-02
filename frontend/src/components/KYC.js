@@ -26,6 +26,9 @@ const KYC = () => {
     age: ''
   });
 
+  const [medicalQuestions, setMedicalQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
   const userId = localStorage.getItem('user_id');
 
   useEffect(() => {
@@ -34,7 +37,7 @@ const KYC = () => {
     }
 
     // Fetch existing KYC data
-    axios.get(`http://localhost:5000/kyc/${userId}`)
+    axios.get(`${process.env.REACT_APP_API_URL}kyc/${userId}`)
       .then(response => {
         if (response.data) {
           setFormData({
@@ -54,24 +57,35 @@ const KYC = () => {
       .catch(error => {
         console.error('Error fetching KYC data:', error);
       });
-  }, [location.state, userId]);
 
-  const medicalQuestions = [
-    "Do you have any allergies?",
-    "Have you ever been hospitalized?",
-    "Do you have any chronic diseases?",
-    "Are you currently taking any medications?",
-    "Do you have a family history of any serious illnesses?"
-  ];
+      // Fetch medical questions
+      axios.get(`${process.env.REACT_APP_API_URL}medical-questions`, { headers: { 'x-access-token': localStorage.getItem('token') } })
+      .then(response => {
+        if (response.data && response.data.length > 0) {
+          setMedicalQuestions(response.data);
+        } else {
+          console.error('No medical questions found.');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching medical questions:', error);
+      });
+  }, [location.state, userId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleOptionChange = (event) => {
+    const value = event.target.value;
+    setSelectedOption(value);
+    setAnswers({ ...answers, [medicalQuestions[currentQuestion].id]: value });
+  };
+
   const handleNext = () => {
     const token = localStorage.getItem('token');  // Get the token from local storage
-
+    const headers = { 'x-access-token': token };
     if (!token) {
         console.error('No token found. User might not be logged in.');
         // Handle this case, perhaps by redirecting to the login page
@@ -102,25 +116,45 @@ const KYC = () => {
             age: formData.age
         };
     } else if (activeTab === 'Medical') {
-      if (currentQuestion < medicalQuestions.length - 1) {
-          setCurrentQuestion(currentQuestion + 1);
-      } else {
-          setIsCompleted(true);
-      }
-  }
-
-    axios.post('http://localhost:5000/save-kyc', dataToSend, config)
+      const currentAnswer = {
+        question_id: medicalQuestions[currentQuestion].id,
+        answer: selectedOption
+      };
+  
+      axios.post(`${process.env.REACT_APP_API_URL}save-medical-answers`, { userId, answers: [currentAnswer] }, { headers })
+        .then(response => {
+          console.log('Medical answer saved successfully:', response.data);
+          if (currentQuestion < medicalQuestions.length - 1) {
+            setCurrentQuestion(prevQuestion => prevQuestion + 1);
+            setSelectedOption(''); // Reset the selected option for the next question
+          } else {
+            setIsCompleted(true);
+          }
+        })
+        .catch(error => {
+          console.error('Error saving medical answer:', error);
+        });
+    }
+  
+    axios.post(`${process.env.REACT_APP_API_URL}save-kyc`, dataToSend, config)
         .then(response => {
             console.log(`KYC ${activeTab.toLowerCase()} data saved successfully:`, response.data);
             if (activeTab === 'Basic') {
                 setActiveTab('Vitals');
-            } else {
+            } else if (activeTab === 'Vitals') {
                 setActiveTab('Medical');
             }
         })
         .catch(error => {
             console.error(`Error saving KYC ${activeTab.toLowerCase()} data:`, error);
         });
+  };
+
+const handleMedicalAnswer = (questionId, answer) => {
+  setAnswers(prevAnswers => ({
+    ...prevAnswers,
+    [questionId]: answer
+  }));
 };
 
   const renderBasicTab = () => (
@@ -213,21 +247,32 @@ const KYC = () => {
 
   const renderMedicalTab = () => (
     <div className="medical-tab">
-      <div className="allergy-question">
-        <p>{medicalQuestions[currentQuestion]}</p>
-      </div>
-      <div className="dropdown-container">
-        <select name={`medical_question_${currentQuestion}`} onChange={handleInputChange}>
-          <option value="">Select an option</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-      </div>
-      <div className="progress-indicator">
-        <span>{currentQuestion + 1}/{medicalQuestions.length}</span>
-      </div>
+      {medicalQuestions.length > 0 && (
+        <>
+          <div className="allergy-question">
+            <p>{medicalQuestions[currentQuestion].question}</p>
+          </div>
+          <div className="dropdown-container">
+            <select
+              name={`medical_question_${currentQuestion}`}
+              onChange={handleOptionChange}
+              value={selectedOption || ''}
+            >
+              <option value="">Select an option</option>
+              {medicalQuestions[currentQuestion].option1 && <option value="1">{medicalQuestions[currentQuestion].option1}</option>}
+              {medicalQuestions[currentQuestion].option2 && <option value="2">{medicalQuestions[currentQuestion].option2}</option>}
+              {medicalQuestions[currentQuestion].option3 && <option value="3">{medicalQuestions[currentQuestion].option3}</option>}
+              {medicalQuestions[currentQuestion].option4 && <option value="4">{medicalQuestions[currentQuestion].option4}</option>}
+              {medicalQuestions[currentQuestion].option5 && <option value="5">{medicalQuestions[currentQuestion].option5}</option>}
+            </select>
+          </div>
+          <div className="progress-indicator">
+            <span>{currentQuestion + 1}/{medicalQuestions.length}</span>
+          </div>
+        </>
+      )}
     </div>
-  );
+  );    
 
   const renderCompletedScreen = () => (
     <div className="completed-screen">
@@ -236,7 +281,7 @@ const KYC = () => {
       </div>
       <h2>Congratulations!</h2>
       <p>Your KYC is completed.</p>
-      <button className="back-to-home-button">Back To Home</button>
+      <button className="back-to-home-button" onClick={() => navigate('/')}>Back To Home</button>
     </div>
   );
 

@@ -49,7 +49,7 @@ const Signup = () => {
 
     const validateReferralCode = async (referralCode) => {
         try {
-            const response = await axios.post('http://localhost:5000/validate-referral', { referralCode });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}validate-referral`, { referralCode });
             return response.data.isValid;
         } catch (error) {
             console.error('Error validating referral code:', error);
@@ -94,7 +94,7 @@ const Signup = () => {
             window.confirmationResult = confirmationResult;
     
             // Send user data to server
-            await axios.post('http://localhost:5000/signup', { userData: data });
+            await axios.post(`${process.env.REACT_APP_API_URL}signup`, { userData: data });
     
             navigate('/otp-verification', { state: { userData: data } });
         } catch (error) {
@@ -162,7 +162,7 @@ const Signup = () => {
                 <p className="signin-link" onClick={handleSigninRedirect}>
                     Already have an account? <span>Sign In</span>
                 </p>
-                <div className="divider">
+                {/* <div className="divider">
                     <span>OR</span>
                 </div>
                 <div className="social-buttons">
@@ -172,7 +172,7 @@ const Signup = () => {
                     <button className="social-button facebook">
                         <img src={facebookIcon} alt="Facebook" /> Facebook
                     </button>
-                </div>
+                </div> */}
             </div>
         </div>
     );

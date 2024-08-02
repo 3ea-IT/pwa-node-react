@@ -40,7 +40,7 @@ const Profile = () => {
   useEffect(() => {
     const userId = localStorage.getItem('user_id');
     if (userId) {
-        axios.get(`http://localhost:5000/user-profile/${userId}`)
+        axios.get(`${process.env.REACT_APP_API_URL}user-profile/${userId}`)
             .then(response => {
                 const profileData = response.data;
                 profileData.dob = formatDate(profileData.dob); // Format the date before setting the state

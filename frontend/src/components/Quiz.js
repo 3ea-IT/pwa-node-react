@@ -26,12 +26,12 @@ const Quiz = () => {
     useEffect(() => {
         const startQuiz = () => {
             const token = localStorage.getItem('token');
-            axios.get('http://localhost:5000/latest-quiz-id', {
+            axios.get(`${process.env.REACT_APP_API_URL}latest-quiz-id`, {
                 headers: { 'x-access-token': token }
             })
             .then(res => {
                 setQuizId(res.data.latestQuizId + 1);
-                axios.get('http://localhost:5000/get-questions', {
+                axios.get(`${process.env.REACT_APP_API_URL}get-questions`, {
                     headers: { 'x-access-token': token }
                 })
                 .then(response => {
@@ -86,7 +86,7 @@ const Quiz = () => {
         };
 
         if (!answerSaved[currentQuestion]) {
-            axios.post('http://localhost:5000/save-answer', answerData, {
+            axios.post(`${process.env.REACT_APP_API_URL}save-answer`, answerData, {
                 headers: { 'x-access-token': token }
             })
             .then(response => {
@@ -122,7 +122,7 @@ const Quiz = () => {
             const result = `${score}/5`;
             const points = score * 10;
             setResultSaved(true);
-            axios.post('http://localhost:5000/save-quiz-result', { score: result, points, quiz_id: quizId }, {
+            axios.post(`${process.env.REACT_APP_API_URL}save-quiz-result`, { score: result, points, quiz_id: quizId }, {
                 headers: { 'x-access-token': token }
             })
             .then(response => {

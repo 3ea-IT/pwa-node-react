@@ -17,7 +17,7 @@ const WalletHistory = () => {
     const fetchWalletData = async () => {
       const userId = localStorage.getItem('user_id');
       try {
-        const response = await axios.get(`http://localhost:5000/user-wallet/${userId}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}user-wallet/${userId}`);
         console.log('User wallet data:', response.data); // Debugging line
         setPoints(response.data.wallet);
       } catch (error) {
@@ -28,7 +28,7 @@ const WalletHistory = () => {
     const fetchTransactions = async () => {
       const userId = localStorage.getItem('user_id');
       try {
-        const response = await axios.get(`http://localhost:5000/transactions/${userId}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}transactions/${userId}`);
         console.log('Transactions data:', response.data); // Debugging line
         setTransactions(response.data.transactions);
       } catch (error) {

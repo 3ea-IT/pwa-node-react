@@ -15,7 +15,7 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:5000/login', { email, password })
+        axios.post(`${process.env.REACT_APP_API_URL}login`, { email, password })
             .then(response => {
                 console.log(response.data);
                 localStorage.setItem('token', response.data.token);
@@ -24,6 +24,7 @@ const Login = () => {
                 navigate('/home');
             })
             .catch(error => {
+                console.log()
                 setError('Wrong email/password');
             });
     };
@@ -53,17 +54,17 @@ const Login = () => {
                 <p className="signup-link" onClick={handleSignupRedirect}>
                     Don’t have an account? <span>Sign Up</span>
                 </p>
-                <div className="divider">
+                {/* <div className="divider">
                     <span>OR</span>
-                </div>
-                <div className="social-buttons">
+                </div> */}
+                {/* <div className="social-buttons">
                     <button className="social-button google">
                         <img src={googleIcon} alt="Google" /> Google
                     </button>
                     <button className="social-button facebook">
                         <img src={facebookIcon} alt="Facebook" /> Facebook
                     </button>
-                </div>
+                </div> */}
             </div>
         </div>
     );

@@ -8,10 +8,26 @@ import Mascort from './assets/Mascort.png';
 import { FaBars, FaSearch } from 'react-icons/fa';
 import { format } from 'date-fns';
 
+import p1 from './assets/p1.jpeg';
+import p2 from './assets/p2.jpeg';
+import p3 from './assets/p3.jpeg';
+import p4 from './assets/p4.jpeg';
+import p5 from './assets/p5.jpeg';
+import p6 from './assets/p6.jpeg';
+
 const Home = () => {
     const [userData, setUserData] = useState({});
     const [showMenu, setShowMenu] = useState(false);
     const date = new Date();
+
+    const popularMedicines = [
+        { name: 'Digesto', image: p1 },
+        { name: 'Jaboran', image: p2 },
+        { name: 'Drox 24', image: p3 },
+        { name: 'Aidoaller', image: p4 },
+        { name: 'Goparty', image: p5 },
+        { name: 'HC 24', image: p6 }
+    ];
 
     const navigate = useNavigate();
 
@@ -21,7 +37,7 @@ const Home = () => {
 
     useEffect(() => {
         const userId = localStorage.getItem('user_id');
-        fetch(`http://localhost:5000/user/${userId}`)
+        fetch(`${process.env.REACT_APP_API_URL}user/${userId}`)
             .then(response => response.json())
             .then(data => setUserData(data))
             .catch(error => console.error('Error fetching user data:', error));
@@ -58,6 +74,20 @@ const Home = () => {
                     <span className="carousel-dot"></span>
                     <span className="carousel-dot"></span>
                 </div>
+                <div className="popular-medicine-section">
+                <div className="popular-medicine-header">
+                    <h3 className="popular-medicine-title">Popular Medicine</h3>
+                    <a href="#" className="see-all-link">See All</a>
+                </div>
+                <div className="medicine-grid">
+                    {popularMedicines.map((medicine, index) => (
+                        <div key={index} className="medicine-item">
+                            <img src={medicine.image} alt={medicine.name} className="medicine-image" />
+                            <p className="medicine-name">{medicine.name}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
             </div>
         </div>
     );

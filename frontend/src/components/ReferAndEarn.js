@@ -17,7 +17,7 @@ function ReferAndEarn() {
     useEffect(() => {
         const fetchReferralCode = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/user/${userId}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}user/${userId}`);
                 setReferralCode(response.data.referral_code);
             } catch (error) {
                 console.error('Error fetching referral code:', error);
@@ -28,7 +28,7 @@ function ReferAndEarn() {
     }, [userId]);
 
     const handleCopy = () => {
-        const referralLink = `http://localhost:3000/signup?ref=${referralCode}`;
+        const referralLink = `${process.env.REACT_APP_BASE_URL}signup?ref=${referralCode}`;
         navigator.clipboard.writeText(referralLink);
         alert('Referral link copied to clipboard!');
     };
@@ -53,7 +53,7 @@ function ReferAndEarn() {
                     <div className="share-link">
                         <input
                         type="text"
-                        value={`http://localhost:3000/signup?ref=${referralCode}`}
+                        value={`${process.env.REACT_APP_BASE_URL}signup?ref=${referralCode}`}
                         readOnly
                         />
                         <button className="copy-button" onClick={handleCopy}>Copy</button>

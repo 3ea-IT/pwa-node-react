@@ -18,7 +18,7 @@ const InviteHistory = () => {
 
     useEffect(() => {
         // Fetch earned points
-        axios.get(`http://localhost:5000/user-wallet/${userId}`)
+        axios.get(`${process.env.REACT_APP_API_URL}user-wallet/${userId}`)
             .then(response => {
                 setEarnedPoints(response.data.wallet);
             })
@@ -27,11 +27,11 @@ const InviteHistory = () => {
             });
 
         // Fetch recent invites and invited friends
-        axios.get(`http://localhost:5000/user/${userId}`)
+        axios.get(`${process.env.REACT_APP_API_URL}user/${userId}`)
             .then(response => {
                 const referralCode = response.data.referral_code;
 
-                axios.get(`http://localhost:5000/recent-invites/${referralCode}`)
+                axios.get(`${process.env.REACT_APP_API_URL}recent-invites/${referralCode}`)
                     .then(response => {
                         setRecentInvites(response.data);
                     })
@@ -39,7 +39,7 @@ const InviteHistory = () => {
                         console.error('Error fetching recent invites:', error);
                     });
 
-                axios.get(`http://localhost:5000/invited-friends/${referralCode}`)
+                axios.get(`${process.env.REACT_APP_API_URL}invited-friends/${referralCode}`)
                     .then(response => {
                         setInvitedFriends(response.data);
                     })
