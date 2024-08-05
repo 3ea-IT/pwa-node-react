@@ -20,6 +20,7 @@ const Login = () => {
                 console.log(response.data);
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user_id', response.data.user_id);
+                localStorage.setItem('ref_code', response.data.referral_code);
                 alert('Logging in...');
                 navigate('/home');
             })

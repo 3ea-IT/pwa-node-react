@@ -18,6 +18,7 @@ import Quiz from './components/Quiz';
 import WalletHistory from './components/WalletHistory';
 import KYC from './components/KYC';
 import './App.css';
+import ProductPage from './components/ProductPage';
 
 function App() {
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -64,6 +65,7 @@ function App() {
                   <Route path='/profile' element={ <Profile/>} />
                   <Route path="/playearn" element={<PlayEarn />} />
                   <Route path="/KYC" element={<KYC />} />
+                  <Route path="/product/:productName" element={<ProductPage />} />
               </Routes>
           </div>
       </Router>

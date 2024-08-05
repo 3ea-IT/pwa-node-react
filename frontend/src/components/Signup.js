@@ -121,8 +121,9 @@ const Signup = () => {
                     <div className="form-group">
                         <input type="text" name="name" placeholder="Full Name" value={userData.name} onChange={handleChange} required />
                     </div>
+                    <label style={{marginRight: 210+"px"}}>Date of birth</label>
                     <div className="form-group">
-                        <input type="date" name="dob" placeholder="Date of Birth" value={userData.dob} onChange={handleChange} required />
+                        <input type="date" name="dob" label="Date of Birth" placeholder="Date of Birth" value={userData.dob} onChange={handleChange} required />
                     </div>
                     <div className="gender-container">
                         <label>

@@ -1,0 +1,145 @@
+.product-page {
+    padding: 20px;
+    max-width: 100%;
+    margin: auto;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.back-button {
+    margin-top: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+h1 {
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+}
+  
+  .back-button {
+    display: inline-block;
+    margin-bottom: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #000;
+  }
+  
+  .product-header {
+    display: flex;
+    align-items: center;
+    background-color: #e6f2ff;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .product-image {
+    width: 130px;
+    height: auto;
+    margin-right: 20px;
+  }
+  
+  .product-info {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .product-info h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: left;
+  }
+  
+  .product-info .tagline {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 5px;
+  }
+  
+  .product-info .dosage {
+    /* margin-right: 100px; */
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    border: 3px solid black;
+    background-color: #000;
+    border-radius: 15px;
+    display: inline-block; /* Add this property */
+    padding: 2px 4px; /* Optional: Add padding for better appearance */
+}
+
+
+  .product-info .price {
+    font-size: 16px;
+    font-weight: 800;
+  }
+  
+  .product-details {
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .product-details h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+  
+  .product-details p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6F6F6F;
+    /* line-height: 1.5; */
+  }
+  
+  .product-section {
+    margin-top: 20px;
+  }
+  
+  .product-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .product-section ul {
+    padding-left: 20px;
+  }
+  
+  .product-section li {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 5px;
+  }
+  
+  .buy-now-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .buy-now-button:hover {
+    background-color: #0052a3;
+  }

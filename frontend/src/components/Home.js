@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Home.css';
 import SideMenu from './SideMenu';
 import profileicon from './assets/profileicon.png';
@@ -23,10 +23,10 @@ const Home = () => {
     const popularMedicines = [
         { name: 'Digesto', image: p1 },
         { name: 'Jaboran', image: p2 },
-        { name: 'Drox 24', image: p3 },
+        { name: 'Drox-24', image: p3 },
         { name: 'Aidoaller', image: p4 },
         { name: 'Goparty', image: p5 },
-        { name: 'HC 24', image: p6 }
+        { name: 'HC-24', image: p6 }
     ];
 
     const navigate = useNavigate();
@@ -83,7 +83,9 @@ const Home = () => {
                     {popularMedicines.map((medicine, index) => (
                         <div key={index} className="medicine-item">
                             <img src={medicine.image} alt={medicine.name} className="medicine-image" />
-                            <p className="medicine-name">{medicine.name}</p>
+                            <Link to={`/product/${medicine.name}`} className="product-item">
+                                <p className="medicine-name">{medicine.name}</p>
+                            </Link>
                         </div>
                     ))}
                 </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import './SideMenu.css';
-import { FaTimes, FaUser, FaWallet, FaGamepad, FaShareAlt, FaSignOutAlt } from 'react-icons/fa';
+import { FaTimes, FaUser, FaWallet, FaGamepad, FaShareAlt, FaSignOutAlt, FaHome } from 'react-icons/fa';
 import profileicon from './assets/profileicon.png';
 
 const SideMenu = ({ closeMenu }) => {
@@ -29,6 +29,7 @@ const SideMenu = ({ closeMenu }) => {
                 <p>{userData.mob}</p>
             </div>
             <div className="menu-items">
+                <a href='/home'><FaHome />Home</a>
                 <a href="/profile"><FaUser />Profile</a>
                 <a href="/wallet"><FaWallet />Wallet</a>
                 <a href="/playearn"><FaGamepad />Play & Earn</a>

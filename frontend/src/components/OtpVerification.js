@@ -168,7 +168,7 @@ const OtpVerification = () => {
                         {otp.map((data, index) => (
                             <input
                                 key={index}
-                                type="text"
+                                type="number"
                                 maxLength="1"
                                 value={data}
                                 onChange={(e) => handleChange(e.target, index)}

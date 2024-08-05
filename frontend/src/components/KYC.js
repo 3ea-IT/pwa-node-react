@@ -281,7 +281,7 @@ const handleMedicalAnswer = (questionId, answer) => {
       </div>
       <h2>Congratulations!</h2>
       <p>Your KYC is completed.</p>
-      <button className="back-to-home-button" onClick={() => navigate('/')}>Back To Home</button>
+      <button className="back-to-home-button" onClick={() => navigate('/home')}>Back To Home</button>
     </div>
   );
 
