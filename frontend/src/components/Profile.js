@@ -37,6 +37,10 @@ const Profile = () => {
     navigate('/kyc');
   }
 
+  const handleNavigateToChatbot = () => {
+    navigate('/chatbot');
+  }
+
   useEffect(() => {
     const userId = localStorage.getItem('user_id');
     if (userId) {
@@ -105,7 +109,7 @@ const Profile = () => {
             <div className="profile-action-item">
               <img src={helpIcon} alt="Help" />
               <span>Help</span>
-              <img src={rightArrow} alt="Arrow" className="right-arrow" />
+              <img src={rightArrow} alt="Arrow" className="right-arrow" onClick={handleNavigateToChatbot} />
             </div>
           </div>
         </div>

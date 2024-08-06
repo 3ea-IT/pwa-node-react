@@ -17,8 +17,9 @@ import PlayEarn from './components/PlayEarn';
 import Quiz from './components/Quiz';
 import WalletHistory from './components/WalletHistory';
 import KYC from './components/KYC';
-import './App.css';
 import ProductPage from './components/ProductPage';
+import ChatbotHome from './components/ChatbotHome';
+import './App.css';
 
 function App() {
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -66,6 +67,7 @@ function App() {
                   <Route path="/playearn" element={<PlayEarn />} />
                   <Route path="/KYC" element={<KYC />} />
                   <Route path="/product/:productName" element={<ProductPage />} />
+                  <Route path="/chatbot" element={<ChatbotHome />} />
               </Routes>
           </div>
       </Router>

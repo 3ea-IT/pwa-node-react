@@ -1,0 +1,132 @@
+.chatbot-home {
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    color: #333;
+  }
+  
+  .chatbot-home .header {
+    background-color: #0046be;
+    padding: 90px;
+    color: #fff;
+    position: relative;
+  }
+  
+  .mascot-container {
+    position: absolute;
+    top: 40px; /* Adjusted to make the mascot image come out of the header */
+    left: 20%;
+    transform: translateX(-50%);
+  }
+  
+  .mascot-image {
+    width: 100px;
+    height: auto;
+  }
+  
+  .chatbot-home .back-button {
+    /* margin-right: 200px; */
+    top: 20px;
+    left: 320px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .back-icon-circle {
+    background-color: #fff;
+    border-radius: 50%;
+    width: 40px;  /* Set equal width and height */
+    height: 40px;
+    display: flex;  /* Center the icon */
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .back-icon-circle img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .header-subtitle {
+    position: absolute;
+    top: 80px; /* Adjust this value to place subtitle below the back button */
+    right: 20px; /* Adjust this value to place the subtitle on the right-hand side */
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 20px;
+    max-width: calc(100% - 140px); /* Ensure it doesn't overlap */
+    word-wrap: break-word; /* Move text to the next line if needed */
+  }
+  
+  
+  .content-box, .talk-box {
+    background-color: #fff;
+    padding: 10px;
+    margin: 40px 20px 0px 20px;
+    border-radius: 10px;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+    box-shadow: 0px 0px 8px 0px #00000040;
+  }
+  
+  .chatbot-home .content {
+    padding: 10px 0;
+  }
+
+  .content p {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+  }
+  
+  .faq-links {
+    margin-top: 20px;
+  }
+  
+  .faq-link {
+    display: block;
+    margin: 10px 0;
+    text-decoration: none;
+    color: #007AFF;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+  }
+  
+  .faq-link:hover {
+    background-color: #f0f0f0;
+  }
+
+  .talk-box {
+    margin-top: 20px;
+  }
+  
+  .talk-link {
+    display: flex;
+    flex-direction: row; /* Change to row to align items horizontally */
+    justify-content: space-between; /* Spread items to both ends */
+    align-items: center; /* Center items vertically */
+    padding: 10px;
+    text-decoration: none;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .talk-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .talk-subtitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    margin-top: 2px;
+  }
+  
+  .right-arrow {
+    width: 20px;
+    height: 20px;
+  }
