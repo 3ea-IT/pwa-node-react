@@ -62,6 +62,7 @@ const ForgotPassword = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             <button onClick={handleEmailSubmit}>Send OTP</button>
+            <p>Go back to <a href='/login'>Login</a></p>
           </div>
         )}
         {step === 2 && (
@@ -73,6 +74,7 @@ const ForgotPassword = () => {
               onChange={(e) => setOtp(e.target.value)}
             />
             <button onClick={handleOtpSubmit}>Verify OTP</button>
+            <p>Entered wrong email address? <a href='/forgot-password'>Re-enter email</a>.</p>
           </div>
         )}
         {step === 3 && (
@@ -100,6 +102,7 @@ const ForgotPassword = () => {
               </button>
             </div>
             <button onClick={handlePasswordSubmit}>Reset Password</button>
+            <p><a href='/forgot-password'>Resend OTP</a></p>
           </div>
         )}
         {step === 4 && (
