@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import Wallet from './components/wallet';
-import SplashScreen from './components/SplashScreen'; 
+import SplashScreen from './components/SplashScreen';
 import GetStarted from './components/GetStarted';
 import OtpVerification from './components/OtpVerification';
 import Home from './components/Home';
@@ -21,57 +21,63 @@ import ProductPage from './components/ProductPage';
 import ChatbotHome from './components/ChatbotHome';
 import './App.css';
 
-function App() {
-    const [isOffline, setIsOffline] = useState(!navigator.onLine);
+const App = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const isLoggedIn = !!localStorage.getItem('user_id');
 
     useEffect(() => {
-        const handleOnline = () => setIsOffline(false);
-        const handleOffline = () => setIsOffline(true);
-
-        window.addEventListener('online', handleOnline);
-        window.addEventListener('offline', handleOffline);
-
-        return () => {
-            window.removeEventListener('online', handleOnline);
-            window.removeEventListener('offline', handleOffline);
-        };
-    }, []);
-
-    if (isOffline) {
-        return (
-            <div className="offline-container">
-                <h1>You are offline</h1>
-                <p>Please check your internet connection and try again.</p>
-            </div>
-        );
-    }
+        // Check if not logged in and not already on the login page to prevent loops
+        if (
+            !isLoggedIn && 
+            location.pathname !== '/login' && 
+            location.pathname !== '/signup' && 
+            location.pathname !== '/otp-verification' &&
+            location.pathname !== '/' &&
+            location.pathname !== '/get-started'
+        ) {
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate, location.pathname]);
 
     return (
-      <Router>
-          <div className="App">
-              <Routes>
-                  <Route path="/" element={<SplashScreen />} />
-                  <Route path="/get-started" element={<GetStarted />} />    
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/otp-verification" element={<OtpVerification />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/quiz" element={<Quiz />} />
-                  <Route path="/wallet" element={<Wallet />} />
-                  <Route path="/wallet-history" element={<WalletHistory />} />
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/side-menu" element={<SideMenu />} />
-                  <Route path='/refer-earn' element={ <ReferAndEarn/>} />
-                  <Route path='/invite-history' element={ <InviteHistory/>} />
-                  <Route path='/profile' element={ <Profile/>} />
-                  <Route path="/playearn" element={<PlayEarn />} />
-                  <Route path="/KYC" element={<KYC />} />
-                  <Route path="/product/:productName" element={<ProductPage />} />
-                  <Route path="/chatbot" element={<ChatbotHome />} />
-              </Routes>
-          </div>
-      </Router>
-  );
-}
+        <div className="App">
+            <Routes>
+                {isLoggedIn ? (
+                    <>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/quiz" element={<Quiz />} />
+                        <Route path="/wallet" element={<Wallet />} />
+                        <Route path="/wallet-history" element={<WalletHistory />} />
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/side-menu" element={<SideMenu />} />
+                        <Route path='/refer-earn' element={ <ReferAndEarn/>} />
+                        <Route path='/invite-history' element={ <InviteHistory/>} />
+                        <Route path='/profile' element={ <Profile/>} />
+                        <Route path="/playearn" element={<PlayEarn />} />
+                        <Route path="/KYC" element={<KYC />} />
+                        <Route path="/product/:productName" element={<ProductPage />} />
+                        <Route path="/chatbot" element={<ChatbotHome />} />
+                    </>
+                ) : (
+                    <>
+                        <Route path="/" element={<SplashScreen />} />
+                        <Route path="/get-started" element={<GetStarted />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/otp-verification" element={<OtpVerification />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="*" element={<Login />} />
+                    </>
+                )}
+            </Routes>
+        </div>
+    );
+};
 
-export default App;
+const AppWrapper = () => (
+    <Router>
+        <App />
+    </Router>
+);
+
+export default AppWrapper;
