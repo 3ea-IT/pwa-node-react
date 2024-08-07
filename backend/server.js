@@ -5,9 +5,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { createUser, findUserByEmail } = require('./models/User');
 const saltRounds = 10;
+const nodemailer = require('nodemailer');
 
 let temporaryUserData = {};
-
 
 const app = express();
 const port = 5000;
@@ -32,20 +32,37 @@ app.use((req, res, next) => {
     next();
   });
 
-// Function to generate a unique referral code
-// const generateReferralCode = async () => {
-//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//     let code = '';
-//     for (let i = 0; i < 8; i++) {
-//         code += characters.charAt(Math.floor(Math.random() * characters.length));
-//     }
-//     const query = `SELECT COUNT(*) AS count FROM users WHERE referral_code = ?`;
-//     const [rows] = await db.promise().query(query, [code]);
-//     if (rows[0].count > 0) {
-//         return generateReferralCode();
-//     }
-//     return code;
-// };
+// Email transporter configuration
+const transporter = nodemailer.createTransport({
+    host: 'mail.3eaglobal.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: 'noreply@3eaglobal.com',
+        pass: '$Td5i&A%rkZB'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+// Send OTP email function
+const sendOtpEmail = (email, otp) => {
+    const mailOptions = {
+        from: '"Dr. Haslab" <noreply@3eaglobal.com>',
+        to: email,
+        subject: 'Your OTP for Password Reset',
+        text: `Your OTP for password reset is ${otp}`,
+        html: `<p>Your OTP for password reset is <b>${otp}</b></p>`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log('Error sending email:', error);
+        }
+        console.log('Email sent:', info.response);
+    });
+};
 
 const generateReferralCode = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -69,6 +86,74 @@ app.post('/signup', (req, res) => {
 
     res.status(200).json({ message: 'OTP sent successfully', otp });
 });
+
+app.post('/forgot-password', async (req, res) => {
+    try {
+      const { email } = req.body;
+      const user = await findUserByEmail(email);
+  
+      if (!user) {
+        return res.status(401).json({ message: 'Email not found' });
+      }
+  
+      const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
+      temporaryUserData[email] = { otp, userId: user.id, timestamp: Date.now() };
+  
+      sendOtpEmail(email, otp);
+  
+      res.status(200).json({ message: 'OTP sent to email. Please wait this might take 1-2 miutes.' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error processing request', error });
+    }
+  });
+  
+  app.post('/verify-otp', (req, res) => {
+    const { email, otp } = req.body;
+  
+    const userData = temporaryUserData[email];
+  
+    if (!userData || userData.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+  
+    const currentTime = Date.now();
+    if (currentTime - userData.timestamp > 10 * 60 * 1000) { // OTP valid for 10 minutes
+      delete temporaryUserData[email];
+      return res.status(400).json({ message: 'OTP expired' });
+    }
+  
+    res.status(200).json({ message: 'OTP verified' });
+  });
+  
+  app.post('/reset-password', async (req, res) => {
+    const { email, newPassword } = req.body;
+  
+    const userData = temporaryUserData[email];
+  
+    if (!userData) {
+      return res.status(400).json({ message: 'Invalid request' });
+    }
+  
+    try {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const query = 'UPDATE users SET password = ? WHERE id = ?';
+  
+      db.query(query, [hashedPassword, userData.userId], (err, results) => {
+        if (err) {
+          console.error('Error updating password:', err);
+          return res.status(500).json({ message: 'Server error' });
+        }
+  
+        // Remove the user data from temporary storage after successful password reset
+        delete temporaryUserData[email];
+  
+        res.status(200).json({ message: 'Password reset successful' });
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Error updating password', error });
+    }
+  });
+  
 
 app.post('/validate-referral', (req, res) => {
     const { referralCode } = req.body;

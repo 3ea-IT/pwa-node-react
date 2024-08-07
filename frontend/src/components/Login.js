@@ -34,6 +34,10 @@ const Login = () => {
         navigate('/signup');
     };
 
+    const handleForgotPasswordRedirect = () => {
+        navigate('/forgot-password');
+    };
+
     return (
         <div className="login-container">
             <div className="login-box">
@@ -49,7 +53,7 @@ const Login = () => {
                             {passwordVisible ? <FaEye /> : <FaEyeSlash />}
                         </button>
                     </div>
-                    <div className="forgot-password">Forget Password?</div>
+                    <div className="forgot-password" onClick={handleForgotPasswordRedirect}><a>Forgot Password?</a></div>
                     <button type="submit" className="signin-button">Sign In</button>
                 </form>
                 <p className="signup-link" onClick={handleSignupRedirect}>

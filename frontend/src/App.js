@@ -19,6 +19,7 @@ import WalletHistory from './components/WalletHistory';
 import KYC from './components/KYC';
 import ProductPage from './components/ProductPage';
 import ChatbotHome from './components/ChatbotHome';
+import ForgotPassword from './components/ForgotPassword';
 import './App.css';
 
 const App = () => {
@@ -27,16 +28,17 @@ const App = () => {
     const isLoggedIn = !!localStorage.getItem('user_id');
 
     useEffect(() => {
-        // Check if not logged in and not already on the login page to prevent loops
-        if (
-            !isLoggedIn && 
-            location.pathname !== '/login' && 
-            location.pathname !== '/signup' && 
-            location.pathname !== '/otp-verification' &&
-            location.pathname !== '/' &&
-            location.pathname !== '/get-started'
-        ) {
-            navigate("/login");
+        const publicRoutes = [
+            '/login',
+            '/signup',
+            '/otp-verification',
+            '/forgot-password',
+            '/',
+            '/get-started',
+        ];
+        // Check if not logged in and not already on a public route to prevent loops
+        if (!isLoggedIn && !publicRoutes.includes(location.pathname)) {
+            navigate('/login');
         }
     }, [isLoggedIn, navigate, location.pathname]);
 
@@ -66,6 +68,7 @@ const App = () => {
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/otp-verification" element={<OtpVerification />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="*" element={<Login />} />
                     </>
                 )}

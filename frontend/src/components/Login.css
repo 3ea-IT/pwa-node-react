@@ -92,6 +92,10 @@ body {
     cursor: pointer;
 }
 
+.forgot-password a{
+    text-decoration: none;
+}
+
 .signin-button {
     background-color: #003399;
     color: white;

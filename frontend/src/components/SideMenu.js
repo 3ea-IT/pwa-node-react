@@ -7,6 +7,7 @@ const SideMenu = ({ closeMenu }) => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
+        localStorage.removeItem('ref_code');
         window.location.href = '/login';
     };
 
