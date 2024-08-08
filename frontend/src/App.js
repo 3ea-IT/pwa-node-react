@@ -20,6 +20,7 @@ import KYC from './components/KYC';
 import ProductPage from './components/ProductPage';
 import ChatbotHome from './components/ChatbotHome';
 import ForgotPassword from './components/ForgotPassword';
+import Notifications from './components/Notifications/Notifications';
 import './App.css';
 
 const App = () => {
@@ -60,6 +61,7 @@ const App = () => {
                         <Route path="/KYC" element={<KYC />} />
                         <Route path="/product/:productName" element={<ProductPage />} />
                         <Route path="/chatbot" element={<ChatbotHome />} />
+                        <Route path='/notifications' element={<Notifications/>} />
                     </>
                 ) : (
                     <>

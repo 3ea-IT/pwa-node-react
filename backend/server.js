@@ -526,6 +526,34 @@ app.get('/invited-friends/:referralCode', (req, res) => {
     });
 });
 
+// Fetch notifications for a user
+app.get('/notifications/:id', (req, res) => {
+    const userId = req.params.id;
+    const query = 'SELECT * FROM push_logs WHERE user_id = ? AND remark = 1 ORDER BY date DESC';
+
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Error fetching notifications', error });
+        } else {
+            res.status(200).json(results);
+        }
+    });
+});
+
+// Update remark to 0 and remove the notification
+app.post('/mark-notification-read', (req, res) => {
+    const { notificationId } = req.body;
+    const query = 'UPDATE push_logs SET remark = 0 WHERE id = ?';
+
+    db.query(query, [notificationId], (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Error marking notification as read', error });
+        } else {
+            res.status(200).json({ message: 'Notification marked as read' });
+        }
+    });
+});
+
 // Endpoint to save an answer
 app.post('/save-answer', verifyJWT, (req, res) => {
     const { ques_id, ans, is_correct, quiz_id } = req.body;

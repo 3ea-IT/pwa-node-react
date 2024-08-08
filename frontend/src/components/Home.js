@@ -5,7 +5,7 @@ import SideMenu from './SideMenu';
 import profileicon from './assets/profileicon.png';
 import sun from './assets/sun.png';
 import Mascort from './assets/Mascort.png';
-import { FaBars, FaSearch } from 'react-icons/fa';
+import { FaBars, FaSearch, FaRegBell } from 'react-icons/fa';
 import { format } from 'date-fns';
 
 import p1 from './assets/p1.jpeg';
@@ -18,6 +18,7 @@ import p6 from './assets/p6.jpeg';
 const Home = () => {
     const [userData, setUserData] = useState({});
     const [showMenu, setShowMenu] = useState(false);
+    const [notificationCount, setNotificationCount] = useState(5);
     const date = new Date();
 
     const popularMedicines = [
@@ -31,8 +32,11 @@ const Home = () => {
 
     const navigate = useNavigate();
 
-    const handleBack = () => {
-        navigate('/profile');  // Navigate to the Refer and Earn page
+    const handleProfile = () => {
+        navigate('/profile'); 
+    };
+    const handleNotif = () => {
+        navigate('/notifications'); 
     };
 
     useEffect(() => {
@@ -41,16 +45,30 @@ const Home = () => {
             .then(response => response.json())
             .then(data => setUserData(data))
             .catch(error => console.error('Error fetching user data:', error));
+
+        fetch(`${process.env.REACT_APP_API_URL}notifications/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            const unreadCount = data.filter(notification => notification.remark === 1).length;
+            setNotificationCount(unreadCount);
+        })
+        .catch(error => console.error('Error fetching notifications:', error));    
     }, []);
 
     return (
         <div className="home-container">
-            <div className="header">
+            <div className="home-header">
                 <FaBars className="menu-icon" onClick={() => setShowMenu(true)} />
-                <img src={profileicon} alt="Profile" className="profile-icon" onClick={handleBack}/>
+                <div className='notifications'>
+                    {notificationCount > 0 && (
+                        <div className="notification-badge">{notificationCount}</div>
+                    )}
+                    <FaRegBell className='bell-icon' onClick={handleNotif}/>
+                    <img src={profileicon} alt="Profile" className="profile-icon" onClick={handleProfile}/>
+                </div>
             </div>
             {showMenu && <SideMenu closeMenu={() => setShowMenu(false)} />}
-            <div className="content">
+            <div className="home-content">
                 <div className="date-section">
                     <img src={sun} alt="Sun" className="sun-icon" />
                     <div className="date">{format(date, 'EEE dd MMM').toUpperCase()}</div>
