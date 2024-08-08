@@ -45,6 +45,75 @@ body {
     font-weight: bold;
 }
 
+.notification-label {
+    position: absolute;
+    top: 60px; /* Adjust according to your design */
+    right: 60px;
+    background: #ffcc00;
+    color: #000;
+    padding: 0px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px; /* Adjust font size */
+    font-weight: 800;
+    animation: dropDown 0.5s ease-out; /* Add drop down animation */
+}
+
+.notification-label::after {
+    content: "";
+    position: absolute;
+    bottom: 100%; /* Position the triangle at the top */
+    right: 20px; /* Adjust according to your design */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #ffcc00;
+}
+
+.notification-label p {
+    margin-top: 15px;
+}
+
+.notification-label .close-icon {
+    position: absolute;
+    top: 5px; /* Position it at the top */
+    left: 7px; /* Position it at the right */
+    cursor: pointer;
+    font-size: 12px; /* Adjust size */
+    background: #fff; /* Add background to match the design */
+    border-radius: 50%; /* Make it round */
+    padding: 2px; /* Add padding to center the X */
+}
+
+@keyframes dropDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
 .menu-icon {
     font-size: 24px;
     color: #000000;

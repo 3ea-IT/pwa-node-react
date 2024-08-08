@@ -5,7 +5,7 @@ import SideMenu from './SideMenu';
 import profileicon from './assets/profileicon.png';
 import sun from './assets/sun.png';
 import Mascort from './assets/Mascort.png';
-import { FaBars, FaSearch, FaRegBell } from 'react-icons/fa';
+import { FaBars, FaSearch, FaRegBell, FaTimes } from 'react-icons/fa';
 import { format } from 'date-fns';
 
 import p1 from './assets/p1.jpeg';
@@ -18,7 +18,8 @@ import p6 from './assets/p6.jpeg';
 const Home = () => {
     const [userData, setUserData] = useState({});
     const [showMenu, setShowMenu] = useState(false);
-    const [notificationCount, setNotificationCount] = useState(5);
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [showNotificationLabel, setShowNotificationLabel] = useState(true);
     const date = new Date();
 
     const popularMedicines = [
@@ -52,8 +53,16 @@ const Home = () => {
             const unreadCount = data.filter(notification => notification.remark === 1).length;
             setNotificationCount(unreadCount);
         })
-        .catch(error => console.error('Error fetching notifications:', error));    
-    }, []);
+        .catch(error => console.error('Error fetching notifications:', error)); 
+        
+        if (notificationCount > 0) {
+            const timer = setTimeout(() => {
+                setShowNotificationLabel(false);
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [notificationCount]);
 
     return (
         <div className="home-container">
@@ -68,6 +77,12 @@ const Home = () => {
                 </div>
             </div>
             {showMenu && <SideMenu closeMenu={() => setShowMenu(false)} />}
+            {showNotificationLabel && notificationCount > 0 && (
+                <div className="notification-label">
+                    <p>You have {notificationCount} unread notifications.</p>
+                    <FaTimes className="close-icon" onClick={() => setShowNotificationLabel(false)} />
+                </div>
+            )}
             <div className="home-content">
                 <div className="date-section">
                     <img src={sun} alt="Sun" className="sun-icon" />
