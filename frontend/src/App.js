@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
@@ -21,12 +21,23 @@ import ProductPage from './components/ProductPage';
 import ChatbotHome from './components/ChatbotHome';
 import ForgotPassword from './components/ForgotPassword';
 import Notifications from './components/Notifications/Notifications';
+import Loader from './components/Loader';
 import './App.css';
 
 const App = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const isLoggedIn = !!localStorage.getItem('user_id');
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const handleLoading = () => {
+            setLoading(true);
+            setTimeout(() => setLoading(false), 0); // Simulate loading time
+        };
+
+        handleLoading();
+    }, [location]);
 
     useEffect(() => {
         const publicRoutes = [
@@ -45,6 +56,7 @@ const App = () => {
 
     return (
         <div className="App">
+            {loading && <Loader />}
             <Routes>
                 {isLoggedIn ? (
                     <>
