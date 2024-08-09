@@ -134,6 +134,14 @@ body {
     border-radius: 16px;
 }
 
+.invite-button {
+    background-color: #003399;
+    color: #FFFFFF;
+    border: none;
+    padding: 1px 20px;
+    border-radius: 16px;
+}
+
 .social-icons {
     display: flex;
     justify-content: center;

@@ -105,7 +105,7 @@ function ReferAndEarn() {
                         <button className="copy-button" onClick={handleCopy}>Copy</button>
                     </div>
                     <div className='flex flex-content-center mt-2'>
-                        <button className='button' id="shareButton">Invite Your Friends</button>
+                        <button className='invite-button' id="shareButton">Invite Your Friends</button>
                     </div>
                     <div className="social-icons">
                         {/* <img src={linkedinIcon} className="icon" /> */}
