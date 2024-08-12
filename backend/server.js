@@ -12,6 +12,15 @@ let temporaryUserData = {};
 const app = express();
 const port = 5000;
 
+const webpush = require('web-push');
+
+// Set VAPID keys
+webpush.setVapidDetails(
+    'mailto:noreply@3eaglobal.com',
+    'BOtvFQtUzC2EurnxDEzrJzIeSeTK134EIsVb9q84Gw9E_oVTDb7hboviLIiutVKyLGRpoNcjMnhyUteYmhDdqdY',
+    'aZwCTxFZQGW7Gc5FYOsexiIjXQv41Y8AH0ikP2VByu8'
+);
+
 app.use(cors());
 app.use(express.json());
 
@@ -338,6 +347,62 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// Subscription API
+app.post('/subscribe', (req, res) => {
+    const { userId, endpoint, keyId, token } = req.body;
+    const time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    const query = 'INSERT INTO pushsubs (user_id, ENDPOINT, KEYID, TOKEN, TIME) VALUES (?, ?, ?, ?, ?)';
+
+    db.query(query, [userId, endpoint, keyId, token, time], (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Error saving subscription', error });
+        } else {
+            res.status(200).json({ message: 'Subscription successful' });
+        }
+    });
+});
+
+app.get('/check-subscription/:id', (req, res) => {
+    const userId = req.params.id;
+    const query = 'SELECT COUNT(*) AS count FROM pushsubs WHERE user_id = ?';
+
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            res.status(500).json({ message: 'Error checking subscription status', error });
+        } else {
+            res.status(200).json({ isSubscribed: results[0].count > 0 });
+        }
+    });
+});
+
+// Send notification
+app.post('/send-notification', (req, res) => {
+    const { userId, message } = req.body;
+
+    // Fetch subscription from the database
+    const query = 'SELECT * FROM pushsubs WHERE user_id = ?';
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Error fetching subscription', error });
+        }
+
+        const subscription = {
+            endpoint: results[0].ENDPOINT,
+            keys: {
+                p256dh: results[0].KEYID,
+                auth: results[0].TOKEN
+            }
+        };
+
+        const payload = JSON.stringify({ title: 'New Notification', body: message });
+
+        webpush.sendNotification(subscription, payload)
+            .then(response => res.status(200).json({ message: 'Notification sent' }))
+            .catch(error => res.status(500).json({ message: 'Error sending notification', error }));
+    });
+});
+
 // Middleware to verify JWT
 const verifyJWT = (req, res, next) => {
     const token = req.headers['x-access-token'];
@@ -529,7 +594,12 @@ app.get('/invited-friends/:referralCode', (req, res) => {
 // Fetch notifications for a user
 app.get('/notifications/:id', (req, res) => {
     const userId = req.params.id;
-    const query = 'SELECT * FROM push_logs WHERE user_id = ? AND remark = 1 ORDER BY date DESC';
+    const query = `
+        SELECT nl.id, n.msg, n.date 
+        FROM notification_log nl 
+        JOIN notification n ON nl.notification_id = n.id 
+        WHERE nl.user_id = ? AND nl.remark = 0 
+        ORDER BY nl.date DESC`;
 
     db.query(query, [userId], (error, results) => {
         if (error) {
@@ -540,10 +610,10 @@ app.get('/notifications/:id', (req, res) => {
     });
 });
 
-// Update remark to 0 and remove the notification
+// Update remark to 1 (read) and remove the notification from the list
 app.post('/mark-notification-read', (req, res) => {
     const { notificationId } = req.body;
-    const query = 'UPDATE push_logs SET remark = 0 WHERE id = ?';
+    const query = 'UPDATE notification_log SET remark = 1 WHERE id = ?';
 
     db.query(query, [notificationId], (error, results) => {
         if (error) {

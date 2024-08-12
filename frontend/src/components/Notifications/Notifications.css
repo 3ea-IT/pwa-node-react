@@ -98,6 +98,10 @@ h2 {
     color: #6F6F6F;
 }
 
+.modal-content p {
+    margin-top: 20px;
+}
+
 .close {
     position: absolute;
     top: 0px;

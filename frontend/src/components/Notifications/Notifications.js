@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
     const [selectedNotification, setSelectedNotification] = useState(null);
+    const [notificationCount, setNotificationCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,17 +28,29 @@ const Notifications = () => {
         setSelectedNotification(notification);
     };
 
-    const handleCloseModal = async () => {
+    const handleCloseModal = () => {
         if (selectedNotification) {
-            try {
-                await axios.post('http://localhost:5000/mark-notification-read', { notificationId: selectedNotification.id });
-                setNotifications(notifications.filter(n => n.id !== selectedNotification.id));
-                setSelectedNotification(null);
-            } catch (error) {
-                console.error('Error marking notification as read:', error);
-            }
+            axios.post('http://localhost:5000/mark-notification-read', { notificationId: selectedNotification.id })
+                .then(() => {
+                    // Remove the read notification from the list
+                    setNotifications(prevNotifications => 
+                        prevNotifications.filter(notif => notif.id !== selectedNotification.id)
+                    );
+                    setSelectedNotification(null);
+                    
+                    // Update notification count
+                    const userId = localStorage.getItem('user_id');
+                    fetch(`http://localhost:5000/notifications/${userId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const unreadCount = data.length;
+                            setNotificationCount(unreadCount);
+                        })
+                        .catch(error => console.error('Error fetching notifications:', error));
+                })
+                .catch(error => console.error('Error marking notification as read:', error));
         }
-    };       
+    };      
 
     return (
         <div className="notifications-container">
