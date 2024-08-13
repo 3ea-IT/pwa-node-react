@@ -110,7 +110,7 @@ const Home = () => {
         const fetchNotificationCount = () => {
             const userId = localStorage.getItem('user_id');
             if (userId) {
-                fetch(`http://localhost:5000/notifications/${userId}`)
+                fetch(`${process.env.REACT_APP_API_URL}notifications/${userId}`)
                     .then(response => response.json())
                     .then(data => {
                         const unreadCount = data.length;

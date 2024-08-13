@@ -15,7 +15,7 @@ const ForgotPassword = () => {
 
   const handleEmailSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/forgot-password', { email });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}forgot-password`, { email });
       setMessage(response.data.message);
       setStep(2);
     } catch (error) {
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
 
   const handleOtpSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/verify-otp', { email, otp });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}verify-otp`, { email, otp });
       setMessage('OTP verified. Please set your new password.');
       setStep(3);
     } catch (error) {
@@ -40,7 +40,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/reset-password', { email, newPassword });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}reset-password`, { email, newPassword });
       setMessage('Password reset successful.');
       setStep(4);
     } catch (error) {

@@ -14,7 +14,7 @@ const Notifications = () => {
         const fetchNotifications = async () => {
             try {
                 const userId = localStorage.getItem('user_id'); // Assuming user_id is stored in localStorage
-                const response = await axios.get(`http://localhost:5000/notifications/${userId}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}notifications/${userId}`);
                 setNotifications(response.data);
             } catch (error) {
                 console.error('Error fetching notifications:', error);
@@ -30,7 +30,7 @@ const Notifications = () => {
 
     const handleCloseModal = () => {
         if (selectedNotification) {
-            axios.post('http://localhost:5000/mark-notification-read', { notificationId: selectedNotification.id })
+            axios.post(`${process.env.REACT_APP_API_URL}mark-notification-read`, { notificationId: selectedNotification.id })
                 .then(() => {
                     // Remove the read notification from the list
                     setNotifications(prevNotifications => 
@@ -40,7 +40,7 @@ const Notifications = () => {
                     
                     // Update notification count
                     const userId = localStorage.getItem('user_id');
-                    fetch(`http://localhost:5000/notifications/${userId}`)
+                    fetch(`${process.env.REACT_APP_API_URL}notifications/${userId}`)
                         .then(response => response.json())
                         .then(data => {
                             const unreadCount = data.length;

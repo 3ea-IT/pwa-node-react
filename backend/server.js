@@ -116,23 +116,23 @@ app.post('/forgot-password', async (req, res) => {
     }
   });
   
-  app.post('/verify-otp', (req, res) => {
-    const { email, otp } = req.body;
+//   app.post('/verify-otp', (req, res) => {
+//     const { email, otp } = req.body;
   
-    const userData = temporaryUserData[email];
+//     const userData = temporaryUserData[email];
   
-    if (!userData || userData.otp !== otp) {
-      return res.status(400).json({ message: 'Invalid OTP' });
-    }
+//     if (!userData || userData.otp !== otp) {
+//       return res.status(400).json({ message: 'Invalid OTP' });
+//     }
   
-    const currentTime = Date.now();
-    if (currentTime - userData.timestamp > 10 * 60 * 1000) { // OTP valid for 10 minutes
-      delete temporaryUserData[email];
-      return res.status(400).json({ message: 'OTP expired' });
-    }
+//     const currentTime = Date.now();
+//     if (currentTime - userData.timestamp > 10 * 60 * 1000) { // OTP valid for 10 minutes
+//       delete temporaryUserData[email];
+//       return res.status(400).json({ message: 'OTP expired' });
+//     }
   
-    res.status(200).json({ message: 'OTP verified' });
-  });
+//     res.status(200).json({ message: 'OTP verified' });
+//   });
   
   app.post('/reset-password', async (req, res) => {
     const { email, newPassword } = req.body;
