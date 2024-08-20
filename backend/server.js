@@ -6,6 +6,19 @@ const jwt = require('jsonwebtoken');
 const { createUser, findUserByEmail } = require('./models/User');
 const saltRounds = 10;
 const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const session = require('express-session');
+
+// Google OAuth2 credentials
+const CLIENT_ID = '1055228578801-fi58ja06penq7n4au1dph9n45csjmgn1.apps.googleusercontent.com';
+const CLIENT_SECRET = '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';
+const REDIRECT_URI = 'http://localhost:5000/auth/google/callback';
+const SCOPES = ['https://www.googleapis.com/auth/fitness.activity.read'];
+
+// OAuth2 client
+// const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
 let temporaryUserData = {};
 
@@ -23,6 +36,51 @@ webpush.setVapidDetails(
 
 app.use(cors());
 app.use(express.json());
+
+app.use(session({
+    secret: '$Mumuksh14$', // Replace with a strong secret key
+    resave: false,
+    saveUninitialized: false,
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+
+// Configure Google OAuth Strategy
+passport.use(new GoogleStrategy({
+    clientID: CLIENT_ID,
+    clientSecret: CLIENT_SECRET,
+    callbackURL: REDIRECT_URI,
+    scope: ['profile', 'email', 'https://www.googleapis.com/auth/fitness.activity.read'],
+    accessType: 'offline',
+    prompt: 'consent'
+},
+(accessToken, refreshToken, profile, done) => {
+    console.log('Access Token:', accessToken);
+    console.log('Refresh Token:', refreshToken);
+    console.log('Profile:', JSON.stringify(profile, null, 2));
+    
+    if (!profile) {
+        return done(new Error('Failed to fetch user profile'), null);
+    }
+    
+    const user = {
+        id: profile.id,
+        email: profile.emails && profile.emails[0] ? profile.emails[0].value : null,
+        accessToken: accessToken,
+        refreshToken: refreshToken
+    };
+    return done(null, user);
+}));
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -420,6 +478,74 @@ const verifyJWT = (req, res, next) => {
     });
 };
 
+// Route to initiate Google OAuth
+app.get('/auth/google', passport.authenticate('google', {
+    scope: ['openid', 'profile', 'email', 'https://www.googleapis.com/auth/fitness.activity.read'],
+    accessType: 'offline',
+    prompt: 'consent'
+}));
+
+// Route to handle Google OAuth callback
+
+app.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req, res) => {
+        const token = jwt.sign({ id: req.user.id, email: req.user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+        res.redirect(`http://localhost:3000/fitness-data?token=${token}&user_id=${req.user.id}`);
+    }
+);
+
+app.get('/api/fetch-fit-data', async (req, res) => {
+    if (!req.user || !req.user.accessToken) {
+        return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+    oauth2Client.setCredentials({
+        access_token: req.user.accessToken,
+        refresh_token: req.user.refreshToken
+    });
+
+    const fitness = google.fitness({ version: 'v1', auth: oauth2Client });
+
+    // Use the startTimeNs and endTimeNs from the request query
+    const startTimeNs = req.query.startTimeNs;
+    const endTimeNs = req.query.endTimeNs;
+
+    if (!startTimeNs || !endTimeNs) {
+        return res.status(400).json({ message: 'startTimeNs and endTimeNs are required' });
+    }
+
+    try {
+        const response = await fitness.users.dataSources.datasets.get({
+            userId: 'me',
+            dataSourceId: 'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
+            datasetId: `${startTimeNs}-${endTimeNs}`,
+        });
+
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error fetching fitness data:', error);
+        res.status(500).json({ message: 'Error fetching fitness data', error: error.message });
+    }
+});
+
+// Middleware to verify token
+app.get('/api/verify-token', (req, res) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+  
+    jwt.verify(token, 'your_jwt_secret', (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: 'Token verification failed', error: err.message });
+      }
+      res.status(200).json({ message: 'Token is valid', userId: decoded.id });
+    });
+  });
+  
 // Endpoint to get random 5 questions
 app.get('/get-questions', verifyJWT, (req, res) => {
     const sql = 'SELECT * FROM questionnaire ORDER BY RAND() LIMIT 5';

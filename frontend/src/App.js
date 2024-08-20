@@ -22,6 +22,8 @@ import ChatbotHome from './components/ChatbotHome';
 import ForgotPassword from './components/ForgotPassword';
 import Notifications from './components/Notifications/Notifications';
 import Loader from './components/Loader';
+import FitnessData from './components/GoogleFit/FitnessData';
+import GoogleCallback from './components/GoogleFit/GoogleCallback';
 import './App.css';
 
 const App = () => {
@@ -74,6 +76,8 @@ const App = () => {
                         <Route path="/product/:productName" element={<ProductPage />} />
                         <Route path="/chatbot" element={<ChatbotHome />} />
                         <Route path='/notifications' element={<Notifications/>} />
+                        <Route path='/fitness-data' element={<FitnessData/>} />
+                        <Route path="/auth/google/callback" element={<GoogleCallback />} />
                     </>
                 ) : (
                     <>
