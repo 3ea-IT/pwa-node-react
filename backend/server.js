@@ -517,13 +517,25 @@ app.get('/api/fetch-fit-data', async (req, res) => {
     }
 
     try {
-        const response = await fitness.users.dataSources.datasets.get({
+        // Fetch step count data
+        const stepResponse = await fitness.users.dataSources.datasets.get({
             userId: 'me',
             dataSourceId: 'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
             datasetId: `${startTimeNs}-${endTimeNs}`,
         });
 
-        res.json(response.data);
+        // Fetch calories expended data
+        const caloriesResponse = await fitness.users.dataSources.datasets.get({
+            userId: 'me',
+            dataSourceId: 'derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended',
+            datasetId: `${startTimeNs}-${endTimeNs}`,
+        });
+
+        // Combine both responses
+        res.json({
+            steps: stepResponse.data,
+            calories: caloriesResponse.data,
+        });
     } catch (error) {
         console.error('Error fetching fitness data:', error);
         res.status(500).json({ message: 'Error fetching fitness data', error: error.message });

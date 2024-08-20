@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Paper, Typography, Button, IconButton, CircularProgress } from '@mui/material';
-import { ArrowBackIos, ArrowForwardIos, DirectionsWalk } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Container, Paper, Typography, Button, IconButton, CircularProgress, Grid } from '@mui/material';
+import { ArrowBackIos, ArrowForwardIos, DirectionsWalk, Timer, LocalFireDepartment, AccessTime, Whatshot } from '@mui/icons-material';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import './FitnessData.css';
 
 const FitnessData = () => {
@@ -57,18 +57,59 @@ const FitnessData = () => {
 
     const getTotalSteps = () => {
         const dayData = fitData[currentDate.toDateString()];
-        if (!dayData || !dayData.point) return 0;
-        return dayData.point.reduce((total, point) => total + point.value[0].intVal, 0);
+        if (!dayData || !dayData.steps || !dayData.steps.point) return 0;
+    
+        // Calculate total steps
+        return dayData.steps.point.reduce((total, point) => total + point.value[0].intVal, 0);
     };
+
+    const getTimeSpentWalking = () => {
+        const dayData = fitData[currentDate.toDateString()];
+        if (!dayData || !dayData.steps || !dayData.steps.point) return 0;
+    
+        let totalWalkingTime = 0; // in milliseconds
+    
+        // Iterate over each point in the steps data
+        dayData.steps.point.forEach(point => {
+            // Calculate the duration for each point (endTimeNanos - startTimeNanos)
+            const startTime = parseInt(point.startTimeNanos, 10) / 1000000; // Convert from nanoseconds to milliseconds
+            const endTime = parseInt(point.endTimeNanos, 10) / 1000000; // Convert from nanoseconds to milliseconds
+    
+            // Add the duration to total walking time
+            totalWalkingTime += (endTime - startTime);
+        });
+    
+        // Convert total walking time from milliseconds to minutes
+        const totalMinutes = Math.floor(totalWalkingTime / (1000 * 60));
+    
+        return totalMinutes;
+    };      
+
+    const getCaloriesBurnt = () => {
+        const dayData = fitData[currentDate.toDateString()];
+        if (!dayData || !dayData.calories || !dayData.calories.point) return 0;
+    
+        // Calculate total calories burnt
+        let totalCalories = 0;
+        dayData.calories.point.forEach(point => {
+            totalCalories += point.value[0].fpVal; // Assuming the calories are stored as floating-point values
+        });
+    
+        // Round the total calories to the nearest whole number
+        return Math.round(totalCalories);
+    };
+        
 
     const getChartData = () => {
         const dayData = fitData[currentDate.toDateString()];
-        if (!dayData || !dayData.point) return [];
-        return dayData.point.map(point => ({
+        if (!dayData || !dayData.steps || !dayData.steps.point) return [];
+    
+        // Map over the steps data to create the chart data
+        return dayData.steps.point.map(point => ({
             time: new Date(parseInt(point.startTimeNanos) / 1000000).toLocaleTimeString(),
             steps: point.value[0].intVal
         }));
-    };
+    };    
 
     const handleDateChange = (direction) => {
         const newDate = new Date(currentDate);
@@ -109,9 +150,85 @@ const FitnessData = () => {
                     <CircularProgress />
                 ) : (
                     <>
+                        <Grid container spacing={1} className="summary-container" alignItems="center">
+                            <Grid item xs={6}>
+                                <div className="summary-item">
+                                    <DirectionsWalk style={{ color: '#4CAF50' }} />
+                                    <Typography variant="h5" className="custom-text">{getTotalSteps()} steps</Typography>
+                                </div>
+                                <div className="summary-item">
+                                    <Timer style={{ color: '#2196F3' }} />
+                                    <Typography variant="h5" className="custom-text">{getTimeSpentWalking()} mins</Typography>
+                                </div>
+                                <div className="summary-item">
+                                    <LocalFireDepartment style={{ color: '#FF4081' }} />
+                                    <Typography variant="h5" className="custom-text">{getCaloriesBurnt()} kcal</Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <div className="pie-chart-container">
+                                    <PieChart width={250} height={250}>
+                                        {/* Outer ring - Steps */}
+                                        <Pie
+                                            data={[
+                                                { name: 'Steps', value: getTotalSteps() },
+                                                { name: 'Remaining', value: 5000 - getTotalSteps() }
+                                            ]}
+                                            cx={125}
+                                            cy={125}
+                                            innerRadius={95}
+                                            outerRadius={115}
+                                            fill="#93c47d"
+                                            paddingAngle={0}
+                                            dataKey="value"
+                                        >
+                                            <Cell key="steps-0" fill="#93c47d" />
+                                            <Cell key="steps-1" fill="#d9ead3" />
+                                        </Pie>
+
+                                        {/* Middle ring - Time spent walking */}
+                                        <Pie
+                                            data={[
+                                                { name: 'Time Spent', value: getTimeSpentWalking() },
+                                                { name: 'Remaining', value: 120 - getTimeSpentWalking() }
+                                            ]}
+                                            cx={125}
+                                            cy={125}
+                                            innerRadius={70}
+                                            outerRadius={90}
+                                            fill="#2196F3"
+                                            paddingAngle={0}
+                                            dataKey="value"
+                                        >
+                                            <Cell key="time-0" fill="#2196F3" />
+                                            <Cell key="time-1" fill="#bfdcf3" />
+                                        </Pie>
+
+                                        {/* Inner ring - Calories burned */}
+                                        <Pie
+                                            data={[
+                                                { name: 'Calories Burnt', value: getCaloriesBurnt() },
+                                                { name: 'Remaining', value: 100 - getCaloriesBurnt() }
+                                            ]}
+                                            cx={125}
+                                            cy={125}
+                                            innerRadius={45}
+                                            outerRadius={65}
+                                            fill="#FF4081"
+                                            paddingAngle={0}
+                                            dataKey="value"
+                                        >
+                                            <Cell key="calories-0" fill="#FF4081" />
+                                            <Cell key="calories-1" fill="#ffabc8" />
+                                        </Pie>
+                                    </PieChart>
+                                </div>
+                            </Grid>
+                        </Grid>
+
                         <div className="step-count">
-                            <DirectionsWalk fontSize="large" />
-                            <Typography variant="h4">
+                            <DirectionsWalk fontSize='large' />
+                            <Typography fontSize="20px">
                                 {getTotalSteps()} steps
                             </Typography>
                         </div>
