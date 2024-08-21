@@ -478,6 +478,33 @@ const verifyJWT = (req, res, next) => {
     });
 };
 
+// Route to fetch product by name
+app.get('/product/:name', (req, res) => {
+    const productName = req.params.name;
+
+    const query = `SELECT * FROM product WHERE name = ?`;
+    
+    db.query(query, [productName], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Database query error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        const product = results[0];
+        
+        // Parse the sections field if it's stored as a JSON string in the database
+        if (product.sections) {
+            product.sections = JSON.parse(product.sections);
+        }
+
+        return res.json(product);
+    });
+});
+
+
 // Route to initiate Google OAuth
 app.get('/auth/google', passport.authenticate('google', {
     scope: ['openid', 'profile', 'email', 'https://www.googleapis.com/auth/fitness.activity.read', 'https://www.googleapis.com/auth/fitness.heart_rate.read'],
