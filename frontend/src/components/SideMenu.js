@@ -1,6 +1,6 @@
 import React from 'react';
 import './SideMenu.css';
-import { FaTimes, FaUser, FaWallet, FaGamepad, FaShareAlt, FaSignOutAlt, FaHome } from 'react-icons/fa';
+import { FaTimes, FaUser, FaWallet, FaGamepad, FaShareAlt, FaSignOutAlt, FaHome, FaRunning } from 'react-icons/fa';
 import profileicon from './assets/profileicon.png';
 
 const SideMenu = ({ closeMenu }) => {
@@ -35,6 +35,7 @@ const SideMenu = ({ closeMenu }) => {
                 <a href="/wallet"><FaWallet />Wallet</a>
                 <a href="/playearn"><FaGamepad />Play & Earn</a>
                 <a href="/refer-earn"><FaShareAlt />Refer & Earn</a>
+                <a href="/fitness-data"><FaRunning />Fitness</a>
                 <button onClick={handleLogout}><FaSignOutAlt />Logout</button>
             </div>
         </div>

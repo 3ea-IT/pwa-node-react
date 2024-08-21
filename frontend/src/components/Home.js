@@ -131,6 +131,14 @@ const Home = () => {
         }
     }, [notificationCount, showNotificationLabel]);  
 
+    useEffect(() => {
+        const userId = localStorage.getItem('user_id');
+        fetch(`${process.env.REACT_APP_API_URL}user/${userId}`)
+            .then(response => response.json())
+            .then(data => setUserData(data))
+            .catch(error => console.error('Error fetching user data:', error));
+    }, []);
+
     return (
         <div className="home-container">
             <div className="home-header">
