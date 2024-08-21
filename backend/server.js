@@ -60,7 +60,7 @@ passport.use(new GoogleStrategy({
     clientID: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     callbackURL: REDIRECT_URI,
-    scope: ['profile', 'email', 'https://www.googleapis.com/auth/fitness.activity.read'],
+    scope: ['profile', 'email', 'https://www.googleapis.com/auth/fitness.activity.read', 'https://www.googleapis.com/auth/fitness.heart_rate.read'],
     accessType: 'offline',
     prompt: 'consent'
 },
@@ -480,7 +480,7 @@ const verifyJWT = (req, res, next) => {
 
 // Route to initiate Google OAuth
 app.get('/auth/google', passport.authenticate('google', {
-    scope: ['openid', 'profile', 'email', 'https://www.googleapis.com/auth/fitness.activity.read'],
+    scope: ['openid', 'profile', 'email', 'https://www.googleapis.com/auth/fitness.activity.read', 'https://www.googleapis.com/auth/fitness.heart_rate.read'],
     accessType: 'offline',
     prompt: 'consent'
 }));
@@ -531,10 +531,18 @@ app.get('/api/fetch-fit-data', async (req, res) => {
             datasetId: `${startTimeNs}-${endTimeNs}`,
         });
 
+        // Fetch heart rate data
+        const heartRateResponse = await fitness.users.dataSources.datasets.get({
+            userId: 'me',
+            dataSourceId: 'derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm',
+            datasetId: `${startTimeNs}-${endTimeNs}`,
+        });
+
         // Combine both responses
         res.json({
             steps: stepResponse.data,
             calories: caloriesResponse.data,
+            heartRate: heartRateResponse.data,
         });
     } catch (error) {
         console.error('Error fetching fitness data:', error);

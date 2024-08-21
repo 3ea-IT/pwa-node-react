@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Paper, Typography, Button, IconButton, CircularProgress, Grid } from '@mui/material';
-import { ArrowBackIos, ArrowForwardIos, DirectionsWalk, Timer, LocalFireDepartment, AccessTime, Whatshot } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { ArrowBackIos, ArrowForwardIos, DirectionsWalk, Timer, LocalFireDepartment, Favorite } from '@mui/icons-material';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, ReferenceArea } from 'recharts';
 import './FitnessData.css';
 
 const FitnessData = () => {
@@ -98,6 +98,21 @@ const FitnessData = () => {
         // Round the total calories to the nearest whole number
         return Math.round(totalCalories);
     };
+
+    const getHeartRateData = () => {
+        const dayData = fitData[currentDate.toDateString()];
+        if (!dayData || !dayData.heartRate || !dayData.heartRate.point) return [];
+    
+        return dayData.heartRate.point.map(point => ({
+            time: new Date(parseInt(point.startTimeNanos) / 1000000).toLocaleTimeString(),
+            bpm: point.value[0].fpVal
+        }));
+    };
+    
+    const getLatestHeartRate = () => {
+        const heartRateData = getHeartRateData();
+        return heartRateData.length > 0 ? Math.round(heartRateData[heartRateData.length - 1].bpm) : 0;
+    };
         
 
     const getChartData = () => {
@@ -139,7 +154,7 @@ const FitnessData = () => {
                     <IconButton onClick={() => handleDateChange('back')}>
                         <ArrowBackIos />
                     </IconButton>
-                    <Typography variant="h6">
+                    <Typography fontSize={18+"px"} fontWeight={600}>
                         {currentDate.toDateString()}
                     </Typography>
                     <IconButton onClick={() => handleDateChange('forward')}>
@@ -154,15 +169,15 @@ const FitnessData = () => {
                             <Grid item xs={6}>
                                 <div className="summary-item">
                                     <DirectionsWalk style={{ color: '#4CAF50' }} />
-                                    <Typography variant="h5" className="custom-text">{getTotalSteps()} steps</Typography>
+                                    <Typography variant="h5" className="custom-text">{getTotalSteps()} <span>steps</span></Typography>
                                 </div>
                                 <div className="summary-item">
                                     <Timer style={{ color: '#2196F3' }} />
-                                    <Typography variant="h5" className="custom-text">{getTimeSpentWalking()} mins</Typography>
+                                    <Typography variant="h5" className="custom-text">{getTimeSpentWalking()} <span>mins</span></Typography>
                                 </div>
                                 <div className="summary-item">
                                     <LocalFireDepartment style={{ color: '#FF4081' }} />
-                                    <Typography variant="h5" className="custom-text">{getCaloriesBurnt()} kcal</Typography>
+                                    <Typography variant="h5" className="custom-text">{getCaloriesBurnt()} <span>kcal</span></Typography>
                                 </div>
                             </Grid>
                             <Grid item xs={6}>
@@ -226,10 +241,33 @@ const FitnessData = () => {
                             </Grid>
                         </Grid>
 
+                        <Grid item xs={12}>
+                            <div className="heart-rate-container">
+                                <div className="heart-rate-display">
+                                    <Favorite style={{ color: '#FF4081', marginRight: '10px' }} />
+                                    <Typography variant="h5" className="custom-text">
+                                        {getLatestHeartRate()} <span>bpm</span>
+                                    </Typography>
+                                </div>
+                                <div className="heart-rate-chart">
+                                    <ResponsiveContainer width="100%" height={200}>
+                                        <LineChart data={getHeartRateData()}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="time" />
+                                            <YAxis domain={[0, 180]} />
+                                            <Tooltip />
+                                            <ReferenceArea y1={50} y2={80} fill="#82ca9d" fillOpacity={0.3} />
+                                            <Line type="monotone" dataKey="bpm" stroke="#FF4081" />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        </Grid>
+
                         <div className="step-count">
-                            <DirectionsWalk fontSize='large' />
-                            <Typography fontSize="20px">
-                                {getTotalSteps()} steps
+                            <DirectionsWalk fontSize='large'/>
+                            <Typography fontSize="20px" fontWeight={600} color={'black'}>
+                                {getTotalSteps()} <span style={{fontWeight: 500, color: '#808080'}}>steps</span>
                             </Typography>
                         </div>
                         <div className="chart-container">

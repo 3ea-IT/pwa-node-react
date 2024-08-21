@@ -46,7 +46,7 @@
 }
 
 .step-count svg {
-    margin-right: 1rem;
+    margin-right: 0.5rem;
 }
 
 .summary-container {
@@ -68,7 +68,12 @@
 
 .custom-text {
     font-size: 20px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
+}
+
+.custom-text span{
+    font-weight: 500;
+    color: gray;
 }
 
 .pie-chart-container {
@@ -76,6 +81,23 @@
     justify-content: center;
     align-items: center;
     /* margin-top: 1rem; */
+}
+
+.heart-rate-container {
+    margin-bottom: 2rem;
+    margin-left: -30px;
+}
+
+.heart-rate-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    margin-left: 40px;
+}
+
+.heart-rate-chart {
+    margin-top: 1rem;
 }
 
 .chart-container {
