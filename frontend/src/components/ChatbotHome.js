@@ -29,7 +29,7 @@ const ChatbotHome = () => {
       </div>
       <div className="content-box">
         <div className="content">
-          <p>Welcome to Dr. Haslab, where knowledge is just a chat away.</p>
+          <p>Welcome to Dr. Haslab, where knowledge is just a chat.</p>
           <div className="faq-links">
             <Link to="/faq" className="faq-link">Frequently Asked Questions For Expert Advice.</Link>
             <Link to="/guidance" className="faq-link">Guidance and Advisory: Common Queries</Link>

@@ -12,7 +12,7 @@ const FeedbackForm = ({ onClose }) => {
   return (
     <div className="feedback-overlay">
       <div className="feedback-form">
-        <h2>Thanks for the feedback</h2>
+        <h2>Thanks for the feedback!</h2>
         <p>Please rate your experience below</p>
         <div className="rating">
           {[...Array(5)].map((star, index) => {
