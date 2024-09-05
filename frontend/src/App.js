@@ -24,6 +24,7 @@ import Notifications from './components/Notifications/Notifications';
 import Loader from './components/Loader';
 import FitnessData from './components/GoogleFit/FitnessData';
 import GoogleCallback from './components/GoogleFit/GoogleCallback';
+import MedicineReminder from './components/MedicineReminder';
 import './App.css';
 
 const App = () => {
@@ -78,6 +79,7 @@ const App = () => {
                         <Route path='/notifications' element={<Notifications/>} />
                         <Route path='/fitness-data' element={<FitnessData/>} />
                         <Route path="/auth/google/callback" element={<GoogleCallback />} />
+                        <Route path='/medicine-reminder' element={<MedicineReminder/>} />
                     </>
                 ) : (
                     <>

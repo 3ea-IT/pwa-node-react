@@ -8,8 +8,10 @@ const Navbar = () => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
-        navigate('/login');
+        navigate('/home');
     };
+
+
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">

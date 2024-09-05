@@ -1050,6 +1050,65 @@ app.get('/medical-questions', verifyJWT, (req, res) => {
 });
 
 
+//Medical Reminder Section
+
+app.get('/medicines', (req, res) => {
+    const query = 'SELECT * FROM Medicine';
+    db.query(query, (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error fetching medicines' });
+        }
+        res.json(results);
+    });
+});
+
+app.post('/medicines', (req, res) => {
+    const { med_name } = req.body;
+  
+    const query = 'INSERT INTO medicine (med_name) VALUES (?)';
+    db.query(query, [med_name], (error, results) => {
+      if (error) {
+        res.status(500).json({ message: 'Error adding medicine', error });
+      } else {
+        // Return the inserted medicine ID
+        res.status(201).json({ id: results.insertId });
+      }
+    });
+  });  
+
+app.get('/medicine-logs', (req, res) => {
+    const { userId } = req.query;
+    const query = 'SELECT ml.*, m.med_name FROM Medicine_logs ml JOIN Medicine m ON ml.med_id = m.id WHERE ml.user_id = ?';
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error fetching medicine logs' });
+        }
+        res.json(results);
+    });
+});
+
+app.post('/medicine-logs', (req, res) => {
+    const { user_id, med_id, dosage, time_remind, days } = req.body;
+    const query = 'INSERT INTO Medicine_logs (user_id, med_id, dosage, time_remind, days) VALUES (?, ?, ?, ?, ?)';
+    db.query(query, [user_id, med_id, dosage, JSON.stringify(time_remind), days], (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error adding medicine log' });
+        }
+        res.status(201).json({ message: 'Medicine log added successfully' });
+    });
+});
+
+app.patch('/medicine-logs/:id', (req, res) => {
+    const { id } = req.params;
+    const { taken } = req.body;
+    const query = 'UPDATE Medicine_logs SET taken = ? WHERE id = ?';
+    db.query(query, [taken, id], (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error updating medicine log' });
+        }
+        res.json({ message: 'Medicine log updated successfully' });
+    });
+});
 
 
 app.listen(port, () => {
