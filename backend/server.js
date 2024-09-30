@@ -1,3 +1,6 @@
+// Load environment variables
+require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -17,9 +20,6 @@ const CLIENT_ID =
 const CLIENT_SECRET = "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";
 const REDIRECT_URI = `${process.env.BASE_URL}auth/google/callback`;
 const SCOPES = ["https://www.googleapis.com/auth/fitness.activity.read"];
-
-// Load environment variables
-require("dotenv").config();
 
 // OAuth2 client
 // const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -101,7 +101,7 @@ passport.use(
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "", // your password
+  password: process.env.DB_PASS, // your password
   database: "pwa-react-node",
 });
 
