@@ -15,8 +15,11 @@ const session = require("express-session");
 const CLIENT_ID =
   "1055228578801-fi58ja06penq7n4au1dph9n45csjmgn1.apps.googleusercontent.com";
 const CLIENT_SECRET = "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";
-const REDIRECT_URI = "http://localhost:5000/auth/google/callback";
+const REDIRECT_URI = `${process.env.BASE_URL}auth/google/callback`;
 const SCOPES = ["https://www.googleapis.com/auth/fitness.activity.read"];
+
+// Load environment variables
+require("dotenv").config();
 
 // OAuth2 client
 // const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
@@ -24,7 +27,7 @@ const SCOPES = ["https://www.googleapis.com/auth/fitness.activity.read"];
 let temporaryUserData = {};
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT;
 
 const webpush = require("web-push");
 
@@ -642,7 +645,7 @@ app.get(
       { expiresIn: "1h" }
     );
     res.redirect(
-      `http://localhost:3000/fitness-data?token=${token}&user_id=${req.user.id}`
+      `${process.env.FRONT_URL}fitness-data?token=${token}&user_id=${req.user.id}`
     );
   }
 );
