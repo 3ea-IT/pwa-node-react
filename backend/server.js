@@ -465,15 +465,15 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await findUserByEmail(email);
-
+    console.log(user);
     if (!user) {
-      return res.status(401).json({ message: "Authentication failed" });
+      return res.status(401).json({ message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.PASSWORD);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Authentication failed" });
+      return res.status(401).json({ message: "Wrong Password" });
     }
 
     const token = jwt.sign(
