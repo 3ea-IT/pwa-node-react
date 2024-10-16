@@ -1026,6 +1026,8 @@ app.post("/save-quiz-result", verifyJWT, (req, res) => {
   });
 });
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Fetch KYC data for the user
 app.get("/kyc/:userId", (req, res) => {
   const userId = req.params.userId;
@@ -1310,8 +1312,9 @@ app.post("/save-medical-answers", verifyJWT, (req, res) => {
     });
 });
 
-//Medical Reminder Section
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//Medical Reminder Section
 app.get("/medicines", (req, res) => {
   const query = "SELECT * FROM Medicine";
   db.query(query, (error, results) => {

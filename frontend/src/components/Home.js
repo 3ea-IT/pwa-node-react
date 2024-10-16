@@ -215,11 +215,11 @@ const Home = () => {
             <button className="learn-more-btn">Learn More</button>
           </div>
         </div>
-        <div className="carousel-dots">
+        {/* <div className="carousel-dots">
           <span className="carousel-dot active"></span>
           <span className="carousel-dot"></span>
           <span className="carousel-dot"></span>
-        </div>
+        </div> */}
         <div className="popular-medicine-section">
           <div className="popular-medicine-header">
             <h3 className="popular-medicine-title">Popular Medicine</h3>
