@@ -577,22 +577,52 @@ const verifyJWT = (req, res, next) => {
 };
 
 //dashboard products
-app.get("/products", (req, res) => {
-  const query = "SELECT name, image FROM product"; // Adjust the query if needed
+app.get("/user-products/:user_id", (req, res) => {
+  const userId = req.params.user_id;
 
-  db.query(query, (err, results) => {
+  // Step 1: Fetch disease IDs linked to the user
+  const diseaseQuery = `
+    SELECT DISTINCT disease_id FROM kyc_disease WHERE user_id = ?
+  `;
+
+  db.query(diseaseQuery, [userId], (err, diseaseResults) => {
     if (err) {
-      console.error("Error fetching products:", err);
-      return res.status(500).json({ message: "Error fetching products" });
+      console.error("Error fetching diseases for user:", err);
+      return res
+        .status(500)
+        .json({ message: "Error fetching diseases for user" });
     }
 
-    // Process the results and send them back as JSON
-    const products = results.map((product) => ({
-      name: product.name,
-      image: `products/${product.image}`, // Assuming the images are stored in /uploads/products/
-    }));
+    const diseaseIds = diseaseResults.map((d) => d.disease_id);
 
-    res.json(products);
+    if (diseaseIds.length === 0) {
+      // User has no diseases associated
+      return res.json([]);
+    }
+
+    // Step 2: Fetch product IDs associated with those diseases
+    const placeholders = diseaseIds.map(() => "?").join(",");
+    const productQuery = `
+      SELECT DISTINCT p.name, p.image 
+      FROM product p
+      JOIN disease_product dp ON p.id = dp.product_id
+      WHERE dp.disease_id IN (${placeholders})
+    `;
+
+    db.query(productQuery, diseaseIds, (err, productResults) => {
+      if (err) {
+        console.error("Error fetching products:", err);
+        return res.status(500).json({ message: "Error fetching products" });
+      }
+
+      // Step 3: Send the product data back to the frontend
+      const products = productResults.map((product) => ({
+        name: product.name,
+        image: `products/${product.image}`,
+      }));
+
+      res.json(products);
+    });
   });
 });
 
@@ -1286,24 +1316,64 @@ app.post("/save-medical-answers", verifyJWT, (req, res) => {
 
   const insertAnswer =
     "INSERT INTO answers_medical (user_id, ques_id, ans, date) VALUES (?, ?, ?, ?)";
-  const answerQueries = answers.map((answer) => {
+  const selectQuestion =
+    "SELECT op1_disease, op2_disease, op3_disease, op4_disease, op5_disease FROM medical_questionnaire WHERE id = ?";
+  const insertDisease =
+    "INSERT INTO kyc_disease (user_id, disease_id) VALUES (?, ?)";
+
+  const answerPromises = answers.map((answer) => {
     return new Promise((resolve, reject) => {
+      // Save the user's answer
       db.query(
         insertAnswer,
         [userId, answer.question_id, answer.answer, date],
         (err, result) => {
           if (err) {
-            reject(err);
-          } else {
-            resolve(result);
+            return reject(err);
           }
+
+          // Get the disease ID associated with the selected option
+          db.query(
+            selectQuestion,
+            [answer.question_id],
+            (err, questionResult) => {
+              if (err) {
+                return reject(err);
+              }
+
+              if (questionResult.length > 0) {
+                const questionData = questionResult[0];
+                const selectedOption = answer.answer; // Assuming this is '1', '2', '3', etc.
+                const diseaseColumn = `op${selectedOption}_disease`;
+                const diseaseId = questionData[diseaseColumn];
+
+                if (diseaseId) {
+                  // Insert into kyc_disease table
+                  db.query(
+                    insertDisease,
+                    [userId, diseaseId],
+                    (err, diseaseResult) => {
+                      if (err) {
+                        return reject(err);
+                      }
+                      resolve(diseaseResult);
+                    }
+                  );
+                } else {
+                  resolve(); // No disease ID associated with this option
+                }
+              } else {
+                reject(new Error("Question not found"));
+              }
+            }
+          );
         }
       );
     });
   });
 
-  Promise.all(answerQueries)
-    .then((results) => {
+  Promise.all(answerPromises)
+    .then(() => {
       res.status(200).json({ message: "Medical answers saved successfully" });
     })
     .catch((error) => {
