@@ -5,8 +5,8 @@ const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
+  host: "118.139.181.47",
+  user: "hsl_pwa",
   password: process.env.DB_PASS, // your password
   database: "pwa-react-node",
 });
