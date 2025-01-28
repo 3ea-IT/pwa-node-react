@@ -15,35 +15,36 @@ const Home = () => {
   const [showNotificationLabel, setShowNotificationLabel] = useState(true);
   const [showSubscribePopup, setShowSubscribePopup] = useState(false);
   const [popularMedicines, setPopularMedicines] = useState([]); // Only recommended products
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [allProducts, setAllProducts] = useState([]);
   const date = new Date();
   const navigate = useNavigate();
 
-  // 1. Fetch only recommended products from the new endpoint
-  useEffect(() => {
-    const fetchRecommendedMedicines = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}recommended-products`
-        );
-        const data = await response.json();
+  // // 1. Fetch only recommended products from the new endpoint
+  // useEffect(() => {
+  //   const fetchRecommendedMedicines = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.REACT_APP_API_URL}recommended-products`
+  //       );
+  //       const data = await response.json();
 
-        // If your backend returns the image path as "products/...",
-        // you might need to prepend REACT_APP_BASE_URL:
-        const products = data.map((product) => ({
-          name: product.name,
-          image: `${process.env.REACT_APP_BASE_URL}${product.image}`,
-          brand_name: product.brand_name,
-        }));
+  //       // If your backend returns the image path as "products/...",
+  //       // you might need to prepend REACT_APP_BASE_URL:
+  //       const products = data.map((product) => ({
+  //         name: product.name,
+  //         image: `${process.env.REACT_APP_BASE_URL}${product.image}`,
+  //         brand_name: product.brand_name,
+  //       }));
 
-        setPopularMedicines(products);
-      } catch (error) {
-        console.error("Error fetching recommended medicines:", error);
-      }
-    };
+  //       setPopularMedicines(products);
+  //     } catch (error) {
+  //       console.error("Error fetching recommended medicines:", error);
+  //     }
+  //   };
 
-    fetchRecommendedMedicines();
-  }, []);
+  //   fetchRecommendedMedicines();
+  // }, []);
 
   //Remove or comment out any old product fetching logic you no longer need:
   // useEffect(() => {
@@ -68,6 +69,42 @@ const Home = () => {
 
   //   fetchPopularMedicines();
   // }, []);
+
+  // recommendedIds is the array of IDs you consider "recommended".
+  const recommendedIds = [1, 16, 17, 18, 19, 24];
+
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}all-products`
+        );
+        const data = await response.json();
+
+        const products = data.map((product) => ({
+          ...product,
+          // If needed, prepend your base URL for images:
+          image: `${process.env.REACT_APP_BASE_URL}${product.image}`,
+        }));
+
+        setAllProducts(products);
+      } catch (error) {
+        console.error("Error fetching all products:", error);
+      }
+    };
+
+    fetchAllProducts();
+  }, []);
+
+  const displayedProducts =
+    searchTerm.trim().length === 0
+      ? allProducts.filter((prod) => recommendedIds.includes(prod.id))
+      : allProducts.filter((prod) => {
+          const term = searchTerm.toLowerCase();
+          const name = prod.name?.toLowerCase() || "";
+          const brand = prod.brand_name?.toLowerCase() || "";
+          return name.includes(term) || brand.includes(term);
+        });
 
   const handleProfile = () => {
     navigate("/profile");
@@ -195,6 +232,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      {/* Header area */}
       <div className="home-header">
         <FaBars className="menu-icon" onClick={() => setShowMenu(true)} />
         <div className="notifications">
@@ -218,16 +256,12 @@ const Home = () => {
             className="close-icon"
             onClick={() => setShowNotificationLabel(false)}
           />
-          {/* <div className="notification-badge">{notificationCount}</div> */}
         </div>
       )}
-      {/* {showSubscribePopup && (
-        <div className="subscribe-popup">
-          <p>Subscribe for latest updates</p>
-          <button onClick={subscribeUser}>Allow</button>
-        </div>
-      )} */}
+
+      {/* Main content */}
       <div className="home-content">
+        {/* Date and greeting */}
         <div className="date-section">
           <img src={sun} alt="Sun" className="sun-icon" />
           <div className="date">{format(date, "EEE dd MMM").toUpperCase()}</div>
@@ -235,10 +269,19 @@ const Home = () => {
         <div className="greeting">
           <h1>Hi, {userData.name}</h1>
         </div>
+
+        {/* 5) Search bar with onChange to update searchTerm */}
         <div className="search-bar">
-          <input type="text" placeholder="Migrane" />
+          <input
+            type="text"
+            placeholder="Search by name or brand..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <FaSearch className="search-icon" />
         </div>
+
+        {/* Mascot section */}
         <div className="mascot-section">
           <img src={Mascort} alt="Doctor Mascot" className="mascot-image" />
           <div className="mascot-text">
@@ -251,18 +294,24 @@ const Home = () => {
             </button>
           </div>
         </div>
-        {/* <div className="carousel-dots">
-          <span className="carousel-dot active"></span>
-          <span className="carousel-dot"></span>
-          <span className="carousel-dot"></span>
-        </div> */}
+
+        {/* Recommended / Search Results */}
         <div className="popular-medicine-section">
+          {/* Heading can dynamically change if you like */}
           <div className="popular-medicine-header">
-            <h3 className="popular-medicine-title">Recomended Medicine</h3>
+            {/* If searching, show "Search Results" else "Recommended" */}
+            {searchTerm.trim().length === 0 ? (
+              <h3 className="popular-medicine-title">Recommended Medicine</h3>
+            ) : (
+              <h3 className="popular-medicine-title">
+                Search Results for "{searchTerm}"
+              </h3>
+            )}
           </div>
+
           <div className="medicine-grid">
-            {popularMedicines.map((medicine, index) => (
-              <div key={index} className="medicine-card">
+            {displayedProducts.map((medicine) => (
+              <div key={medicine.id} className="medicine-card">
                 <div className="medicine-image-wrapper">
                   <img
                     src={medicine.image}
@@ -281,11 +330,17 @@ const Home = () => {
                   >
                     <h3 className="medicine-name">{medicine.name}</h3>
                   </Link>
-                  {/* <p className="medicine-price">{medicine.price}</p> */}
                 </div>
               </div>
             ))}
           </div>
+
+          {/* If no results */}
+          {displayedProducts.length === 0 && searchTerm.trim().length > 0 && (
+            <p style={{ textAlign: "center", marginTop: "1rem" }}>
+              No products found matching "{searchTerm}"
+            </p>
+          )}
         </div>
       </div>
     </div>
