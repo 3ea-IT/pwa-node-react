@@ -51,7 +51,7 @@ const ProductPage = () => {
           <h1>{product.name}</h1>
           <p className="tagline">{product.tagline}</p>
           <p className="dosage">{product.dosage}</p>
-          <p className="price">{product.price}</p>
+          <p className="price">₹{product.price}</p>
         </div>
       </div>
 

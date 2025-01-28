@@ -13,33 +13,61 @@ const Home = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [showNotificationLabel, setShowNotificationLabel] = useState(true);
-  const [showSubscribePopup, setShowSubscribePopup] = useState(true);
-  const [popularMedicines, setPopularMedicines] = useState([]); // Store products dynamically
+  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+  const [popularMedicines, setPopularMedicines] = useState([]); // Only recommended products
+
   const date = new Date();
   const navigate = useNavigate();
 
+  // 1. Fetch only recommended products from the new endpoint
   useEffect(() => {
-    const fetchPopularMedicines = async () => {
+    const fetchRecommendedMedicines = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}products`
+          `${process.env.REACT_APP_API_URL}recommended-products`
         );
         const data = await response.json();
 
-        // Assuming the API returns an array of products with name and image URL
+        // If your backend returns the image path as "products/...",
+        // you might need to prepend REACT_APP_BASE_URL:
         const products = data.map((product) => ({
           name: product.name,
-          image: `${process.env.REACT_APP_BASE_URL}${product.image}`, // Assuming image paths are stored in the database
+          image: `${process.env.REACT_APP_BASE_URL}${product.image}`,
+          brand_name: product.brand_name,
         }));
 
-        setPopularMedicines(products); // Update the state with fetched data
+        setPopularMedicines(products);
       } catch (error) {
-        console.error("Error fetching popular medicines:", error);
+        console.error("Error fetching recommended medicines:", error);
       }
     };
 
-    fetchPopularMedicines();
+    fetchRecommendedMedicines();
   }, []);
+
+  //Remove or comment out any old product fetching logic you no longer need:
+  // useEffect(() => {
+  //   const fetchPopularMedicines = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.REACT_APP_API_URL}products`
+  //       );
+  //       const data = await response.json();
+
+  //       // Assuming the API returns an array of products with name and image URL
+  //       const products = data.map((product) => ({
+  //         name: product.name,
+  //         image: `${process.env.REACT_APP_BASE_URL}${product.image}`, // Assuming image paths are stored in the database
+  //       }));
+
+  //       setPopularMedicines(products); // Update the state with fetched data
+  //     } catch (error) {
+  //       console.error("Error fetching popular medicines:", error);
+  //     }
+  //   };
+
+  //   fetchPopularMedicines();
+  // }, []);
 
   const handleProfile = () => {
     navigate("/profile");
@@ -190,12 +218,12 @@ const Home = () => {
           {/* <div className="notification-badge">{notificationCount}</div> */}
         </div>
       )}
-      {showSubscribePopup && (
+      {/* {showSubscribePopup && (
         <div className="subscribe-popup">
           <p>Subscribe for latest updates</p>
           <button onClick={subscribeUser}>Allow</button>
         </div>
-      )}
+      )} */}
       <div className="home-content">
         <div className="date-section">
           <img src={sun} alt="Sun" className="sun-icon" />
@@ -205,13 +233,16 @@ const Home = () => {
           <h1>Hi, {userData.name}</h1>
         </div>
         <div className="search-bar">
-          <input type="text" placeholder="Hair Fall" />
+          <input type="text" placeholder="Migrane" />
           <FaSearch className="search-icon" />
         </div>
         <div className="mascot-section">
           <img src={Mascort} alt="Doctor Mascot" className="mascot-image" />
           <div className="mascot-text">
-            <h2>Discover Home Remedies for Hair Fall by Dr. Haslab</h2>
+            <h2>
+              Explore Effective Homeopathic Remedies for All Your Health
+              Concerns with Dr. Haslab
+            </h2>
             <button className="learn-more-btn">Learn More</button>
           </div>
         </div>
@@ -222,19 +253,31 @@ const Home = () => {
         </div> */}
         <div className="popular-medicine-section">
           <div className="popular-medicine-header">
-            <h3 className="popular-medicine-title">Popular Medicine</h3>
+            <h3 className="popular-medicine-title">Recomended Medicine</h3>
           </div>
           <div className="medicine-grid">
             {popularMedicines.map((medicine, index) => (
-              <div key={index} className="medicine-item">
-                <img
-                  src={medicine.image}
-                  alt={medicine.name}
-                  className="medicine-image"
-                />
-                <Link to={`/product/${medicine.name}`} className="product-item">
-                  <p className="medicine-name">{medicine.name}</p>
-                </Link>
+              <div key={index} className="medicine-card">
+                <div className="medicine-image-wrapper">
+                  <img
+                    src={medicine.image}
+                    alt={medicine.name}
+                    className="medicine-image"
+                    onError={(e) => {
+                      e.target.src = "/fallback-image.png";
+                    }}
+                  />
+                </div>
+                <div className="medicine-content">
+                  <span className="brand-badge">{medicine.brand_name}</span>
+                  <Link
+                    to={`/product/${medicine.name}`}
+                    className="medicine-link"
+                  >
+                    <h3 className="medicine-name">{medicine.name}</h3>
+                  </Link>
+                  {/* <p className="medicine-price">{medicine.price}</p> */}
+                </div>
               </div>
             ))}
           </div>

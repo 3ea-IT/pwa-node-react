@@ -626,6 +626,56 @@ app.get("/user-products/:user_id", (req, res) => {
   });
 });
 
+// recommended-products endpoint
+app.get("/recommended-products", (req, res) => {
+  // Specify which product IDs you want to show
+  const recommendedIds = [1, 16, 17, 18, 19, 24];
+  const placeholders = recommendedIds.map(() => "?").join(",");
+  const query = `SELECT id, name, image, price, brand_name 
+                 FROM product 
+                 WHERE id IN (${placeholders})`;
+
+  db.query(query, recommendedIds, (err, results) => {
+    if (err) {
+      console.error("Error fetching recommended products:", err);
+      return res
+        .status(500)
+        .json({ message: "Error fetching recommended products" });
+    }
+
+    // Adjust 'image' field if you store images in a different folder
+    const products = results.map((product) => ({
+      id: product.id,
+      name: product.name,
+      image: `products/${product.image}`,
+      brand_name: product.brand_name,
+    }));
+
+    return res.json(products);
+  });
+});
+
+// Return all products
+app.get("/all-products", (req, res) => {
+  const query = "SELECT * FROM product"; // or specify columns if you prefer
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching all products:", err);
+      return res.status(500).json({ message: "Error fetching products" });
+    }
+
+    // Optionally transform the image paths if needed
+    // e.g., if you store images in /products/...:
+    const products = results.map((product) => ({
+      ...product,
+      image: `products/${product.image}`, // Adjust to match your actual image storage
+    }));
+
+    return res.json(products);
+  });
+});
+
 // Route to fetch product by name
 app.get("/product/:name", (req, res) => {
   const productName = req.params.name;
