@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
-import "../components/AllProducts.css";
+import { Link, useNavigate } from "react-router-dom";
+import "./AllProducts.css";
 
 const AllProducts = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch all products on component mount
     fetch(`${process.env.REACT_APP_API_URL}all-products`)
       .then((res) => res.json())
       .then((data) => {
-        // If you need to prepend a base URL:
         const updated = data.map((product) => ({
           ...product,
-          // Example: If your base URL is needed for images
           image: `${process.env.REACT_APP_BASE_URL}${product.image}`,
         }));
         setAllProducts(updated);
@@ -23,7 +22,6 @@ const AllProducts = () => {
       });
   }, []);
 
-  // Filter products by name or brand name
   const filteredProducts = allProducts.filter((product) => {
     const term = searchTerm.toLowerCase();
     const productName = product.name?.toLowerCase() || "";
@@ -32,39 +30,66 @@ const AllProducts = () => {
   });
 
   return (
-    <div className="all-products-container">
-      <header className="all-products-header">
-        <h1>All Products</h1>
-        <div className="search-container">
+    <div className="ap-container">
+      <div className="ap-header">
+        <div className="ap-nav-bar">
+          <button className="ap-back-button" onClick={() => navigate(-1)}>
+            ← Back
+          </button>
+          <div className="ap-title-section">
+            <h1>All Products</h1>
+          </div>
+        </div>
+
+        <div className="ap-search-wrapper">
           <input
             type="text"
             placeholder="Search by name or brand..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="ap-search-input"
           />
+          <span className="ap-search-icon">🔍</span>
         </div>
-      </header>
+      </div>
 
-      <div className="products-grid">
+      <div className="ap-products-grid">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="product-card">
-            <div className="product-image-wrapper">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="product-image"
-              />
+          <Link
+            to={`/product/${product.name}`}
+            key={product.id}
+            className="ap-product-link"
+          >
+            <div className="ap-product-card">
+              <div className="ap-product-image-wrapper">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="ap-product-image"
+                  onError={(e) => {
+                    e.target.src = "/api/placeholder/400/400";
+                  }}
+                />
+              </div>
+              <div className="ap-product-info">
+                <h3 className="ap-product-title">{product.name}</h3>
+                {product.brand_name && (
+                  <p className="ap-product-brand">
+                    Brand: {product.brand_name}
+                  </p>
+                )}
+                <p className="ap-product-price">{product.price}</p>
+              </div>
             </div>
-            <h3 className="product-title">{product.name}</h3>
-            {product.brand_name && (
-              <p className="product-brand">Brand: {product.brand_name}</p>
-            )}
-            {product.price && (
-              <p className="product-price">Price: {product.price}</p>
-            )}
-          </div>
+          </Link>
         ))}
       </div>
+
+      {filteredProducts.length === 0 && (
+        <div className="ap-no-results">
+          <p>No products found matching "{searchTerm}"</p>
+        </div>
+      )}
     </div>
   );
 };

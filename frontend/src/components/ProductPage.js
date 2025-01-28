@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProductPage.css";
-import backIcon from "./assets/leftarrow.png"; // Adjust if needed, ensure it's the correct path
+import backIcon from "./assets/leftarrow.png"; // Ensure correct path
 import axios from "axios";
 
 const ProductPage = () => {
@@ -33,7 +33,6 @@ const ProductPage = () => {
   if (error) return <p>{error}</p>;
   if (!product) return <p>Product not found</p>;
 
-  // Dynamically import the image from the same folder
   const imagePath = `${process.env.REACT_APP_BASE_URL}products/${product.image}`;
 
   return (
@@ -57,17 +56,28 @@ const ProductPage = () => {
 
       <div className="product-details">
         <h2>About {product.name}</h2>
-        {/* Render the description as HTML */}
         <div dangerouslySetInnerHTML={{ __html: product.description }} />
-        {/* Render the sections as HTML */}
       </div>
+
       <div className="product-sections">
         <div
           dangerouslySetInnerHTML={{ __html: product.sections }}
           style={{ textAlign: "left" }}
         />
       </div>
-      <button className="buy-now-button">Buy Now</button>
+
+      <button
+        className="buy-now-button"
+        onClick={() => {
+          if (product.buy_link) {
+            window.open(product.buy_link, "_blank"); // Open in a new tab
+          } else {
+            alert("Buy link is not available for this product.");
+          }
+        }}
+      >
+        Buy Now
+      </button>
     </div>
   );
 };

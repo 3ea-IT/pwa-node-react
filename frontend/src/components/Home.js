@@ -75,6 +75,9 @@ const Home = () => {
   const handleNotif = () => {
     navigate("/notifications");
   };
+  const handleLearnMoreClick = () => {
+    navigate("/all-products");
+  };
 
   const subscribeUser = async () => {
     if ("serviceWorker" in navigator && "PushManager" in window) {
@@ -243,7 +246,9 @@ const Home = () => {
               Explore Effective Homeopathic Remedies for All Your Health
               Concerns with Dr. Haslab
             </h2>
-            <button className="learn-more-btn">Learn More</button>
+            <button className="learn-more-btn" onClick={handleLearnMoreClick}>
+              Learn More
+            </button>
           </div>
         </div>
         {/* <div className="carousel-dots">

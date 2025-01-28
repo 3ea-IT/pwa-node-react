@@ -32,6 +32,8 @@ import FitnessData from "./components/GoogleFit/FitnessData";
 import GoogleCallback from "./components/GoogleFit/GoogleCallback";
 import MedicineReminder from "./components/MedicineReminder";
 import AllProducts from "./components/AllProducts";
+import TicTacToe from "./components/games/TicTacToe";
+import Tetris from "./components/games/Tetris";
 import "./App.css";
 
 const App = () => {
@@ -73,6 +75,8 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/all-products" element={<AllProducts />} />
             <Route path="/quiz" element={<Quiz />} />
+            <Route path="/tictactoe" element={<TicTacToe />} />
+            <Route path="/tetris" element={<Tetris />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/wallet-history" element={<WalletHistory />} />
             <Route path="/home" element={<Home />} />

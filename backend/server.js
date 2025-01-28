@@ -171,6 +171,174 @@ app.post("/signup", (req, res) => {
   res.status(200).json({ message: "OTP sent successfully", otp });
 });
 
+// Bypass OTP and directly insert the user
+app.post("/signup-direct", async (req, res) => {
+  const { userData } = req.body;
+
+  try {
+    console.log("Received direct signup request:", userData);
+
+    // 1. Hash the password
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    // 2. Generate a unique referral code
+    let referralCode = generateReferralCode();
+
+    // Helper function to check if referral code is unique
+    const checkUniqueCode = async (code) => {
+      const query =
+        "SELECT COUNT(*) AS count FROM users WHERE referral_code = ?";
+      return new Promise((resolve, reject) => {
+        db.query(query, [code], (err, results) => {
+          if (err) return reject(err);
+          resolve(results[0].count === 0);
+        });
+      });
+    };
+
+    // Ensure the referral code is unique
+    let isUnique = await checkUniqueCode(referralCode);
+    while (!isUnique) {
+      referralCode = generateReferralCode();
+      isUnique = await checkUniqueCode(referralCode);
+    }
+
+    // 3. Handle referral logic
+    let walletPoints = 50; // default if no referral
+    let referredBy = null;
+    let referringUserId = null;
+
+    if (userData.referralCode) {
+      // Check if the referral code exists
+      const checkReferralCodeQuery =
+        "SELECT id FROM users WHERE referral_code = ?";
+      const [rows] = await db
+        .promise()
+        .query(checkReferralCodeQuery, [userData.referralCode]);
+
+      if (rows.length > 0) {
+        // Valid referral code
+        referredBy = userData.referralCode;
+        walletPoints = 70; // user gets more if referred
+        referringUserId = rows[0].id;
+
+        // Give the referrer an additional bonus
+        const updateReferrerWalletQuery =
+          "UPDATE users SET wallet = wallet + 100 WHERE id = ?";
+        await db.promise().query(updateReferrerWalletQuery, [referringUserId]);
+
+        // Log points for the referrer
+        const insertPointsLogReferrer =
+          "INSERT INTO points_log (user_id, points, type, remark, source, date) VALUES (?, ?, 'cr', 'Referral bonus', 'RB', ?)";
+        const date = new Date().toISOString().slice(0, 19).replace("T", " ");
+        await db
+          .promise()
+          .query(insertPointsLogReferrer, [referringUserId, 100, date]);
+
+        // Insert into referral table for the referrer
+        const insertReferralReferrer =
+          "INSERT INTO referral (from_id, to_id, points, date, remark) VALUES (?, ?, ?, ?, 'RB')";
+        await db
+          .promise()
+          .query(insertReferralReferrer, [referringUserId, null, 100, date]);
+      } else {
+        // Invalid referral code
+        return res
+          .status(400)
+          .json({ message: "Invalid referral code. Please try again." });
+      }
+    }
+
+    // 4. Insert the user into the 'users' table
+    const insertUser = `INSERT INTO users 
+        (name, email, mob, dob, gender, password, date, pin, area, city, state, referral_code, referred_by, wallet) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    db.query(
+      insertUser,
+      [
+        userData.name,
+        userData.email,
+        userData.mob,
+        userData.dob,
+        userData.gender,
+        hashedPassword,
+        userData.date, // Make sure userData.date is set in the frontend
+        null,
+        null,
+        null,
+        null,
+        referralCode,
+        referredBy,
+        walletPoints,
+      ],
+      async (err, result) => {
+        if (err) {
+          console.log("Error inserting user:", err);
+          return res.status(500).json({
+            message:
+              "There was an error creating the account. Please try again.",
+            error: err,
+          });
+        }
+
+        // 5. Insert points log and handle referral
+        const userId = result.insertId;
+        const insertPointsLogNewUser = `INSERT INTO points_log (user_id, points, type, remark, source, date) 
+           VALUES (?, ?, 'cr', ?, ?, ?)`;
+        const date = new Date().toISOString().slice(0, 19).replace("T", " ");
+        const remark = referredBy
+          ? "Joining Bonus via Referral"
+          : "Direct Joining Bonus";
+        const source = referredBy ? "JBR" : "DJB";
+
+        await db
+          .promise()
+          .query(insertPointsLogNewUser, [
+            userId,
+            walletPoints,
+            remark,
+            source,
+            date,
+          ]);
+
+        // Update referral entry for the referrer with the new user's ID
+        if (referredBy) {
+          // We previously inserted a row with to_id=null
+          const updateReferralReferrer =
+            "UPDATE referral SET to_id = ? WHERE from_id = ? AND to_id IS NULL AND remark = 'RB' AND date = ?";
+          await db
+            .promise()
+            .query(updateReferralReferrer, [userId, referringUserId, date]);
+
+          // Insert into referral table for the new user
+          const insertReferralNewUser =
+            "INSERT INTO referral (from_id, to_id, points, date, remark) VALUES (?, ?, ?, ?, 'JBR')";
+          await db
+            .promise()
+            .query(insertReferralNewUser, [userId, referringUserId, 70, date]);
+        } else {
+          // No referral code => "DJB" (Direct Joining Bonus)
+          const insertReferralNewUser =
+            "INSERT INTO referral (from_id, to_id, points, date, remark) VALUES (0, ?, ?, ?, 'DJB')";
+          await db.promise().query(insertReferralNewUser, [userId, 50, date]);
+        }
+
+        // 6. Done!
+        return res
+          .status(200)
+          .json({ message: "Account created successfully" });
+      }
+    );
+  } catch (error) {
+    console.log("Error processing direct signup:", error);
+    return res.status(500).json({
+      message: "There was an error processing your request. Please try again.",
+      error,
+    });
+  }
+});
+
 app.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
