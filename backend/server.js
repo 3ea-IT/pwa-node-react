@@ -99,8 +99,8 @@ passport.use(
 );
 
 const db = mysql.createConnection({
-  host: "118.139.181.47",
-  user: "hsl_pwa",
+  host: "localhost",
+  user: "root",
   password: process.env.DB_PASS, // your password
   database: "pwa-react-node",
 });
